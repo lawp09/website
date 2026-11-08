@@ -17,9 +17,14 @@ const fmt = (d: Date) =>
   description="Textes sur la conception de systèmes, la sécurité par défaut et le travail avec des agents."
   section="ecrits"
 >
-  <section class="band">
-    <div class="shell">
-      <h1 class="lede">Ce que j’écris, je l’ai cassé d’abord.</h1>
+  <section class="nappe">
+    <div class="cadre">
+      <div class="entete-section">
+        <div>
+          <p class="etiquette">Écrits</p>
+          <h1 class="titre-section">Ce que j’écris, je l’ai cassé d’abord.</h1>
+        </div>
+      </div>
 
       {
         entries.length === 0 ? (
@@ -29,14 +34,13 @@ const fmt = (d: Date) =>
             {entries.map((e) => (
               <li class="piece">
                 <a class="piece__link" href={`/ecrits/${e.id}/`}>
-                  <h2 class="piece__title">
-                    {e.data.title}
-                    {e.data.draft && <span class="piece__flag">brouillon</span>}
-                  </h2>
-                  <p class="piece__blurb">{e.data.description}</p>
-                  <span class="piece__when">
+                  <span class="piece__meta">
                     <time datetime={e.data.date.toISOString()}>{fmt(e.data.date)}</time>
+                    {e.data.tags.length > 0 && <span>{e.data.tags.join(' · ')}</span>}
+                    {e.data.draft && <span class="piece__flag">brouillon</span>}
                   </span>
+                  <h2 class="piece__title">{e.data.title}</h2>
+                  <p class="piece__blurb">{e.data.description}</p>
                 </a>
               </li>
             ))}

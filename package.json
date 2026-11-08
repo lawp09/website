@@ -12,7 +12,8 @@
     "astro": "astro",
     "check:types": "astro check",
     "check:constraints": "node scripts/check-constraints.mjs",
-    "verify": "npm run check:types && npm run build && npm run check:constraints"
+    "test": "node --test scripts/*.test.mjs",
+    "verify": "npm run check:types && npm test && npm run build && npm run check:constraints"
   },
   "dependencies": {
     "astro": "^7.4.7"

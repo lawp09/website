@@ -1,26 +1,35 @@
 ---
 import Base from '../layouts/Base.astro';
-import Seuil from '../components/Seuil.astro';
+import Lisiere from '../components/Lisiere.astro';
 import { getCollection } from 'astro:content';
 
-// Trois lés tissés séparément. L'ordre est chronologique, les largeurs
-// et les départs sont décalés dans la feuille de style.
+// Un timbre par employeur, numéroté dans l'ordre d'émission. `vignette`
+// nomme la classe du motif : il n'y a pas d'image, seulement du gradient,
+// et le motif ne peut donc pas passer par une variable inline (un style=""
+// casserait la CSP — voir scripts/check-constraints.mjs).
 const parcours = [
   {
+    numero: 'N° 1',
     ou: 'Air France',
     quand: '2011–2019',
+    vignette: 'timbre--air',
     enjeu:
       'Comptabilité des recettes, gestion du carburant, sortie d’applications z/OS. L’erreur s’y lit dans les comptes, pas dans un log.',
   },
   {
+    numero: 'N° 2',
     ou: 'Ville de Montréal',
     quand: '2019–2026',
+    vignette: 'timbre--ville',
+    cachet: true,
     enjeu:
       'Du service public, et neuf personnes à diriger. L’usager n’a pas de concurrent chez qui aller quand ça tombe.',
   },
   {
+    numero: 'N° 3',
     ou: 'Koios Intelligence',
     quand: 'depuis 2026',
+    vignette: 'timbre--koios',
     enjeu:
       'L’assurance, et une équipe qui construit avec des agents. L’erreur se paie en argent réel.',
   },
@@ -38,44 +47,147 @@ const fmt = (d: Date) =>
   title="Philippe Lawson"
   description="Architecture de systèmes distribués, sécurité par défaut, et ce qu’on apprend en production."
 >
-  <section class="band band--field open">
-    <div class="shell">
-      <h1 class="open__text">
-        Rien n’est de confiance par défaut. Ni le réseau, ni le client, <em>ni moi.</em>
-      </h1>
-
-      <p class="open__lead">
-        Je conçois des systèmes distribués et je dirige une équipe qui construit avec
-        des agents. J’écris ici sur ce qui tient en production, et sur <strong
-          >ce qui cède</strong
-        >.
-      </p>
-
-      <div class="weave">
-        <p class="weave__said">
-          Quinze ans à construire des choses dont on ne parle que le jour où elles s’arrêtent.
+  <section class="nappe nappe--ouverture">
+    <div class="cadre ouverture">
+      <div class="ouverture__dire">
+        <p class="salut">
+          <span lang="ee">Woezɔ</span> · <span lang="gsw">Willkomme</span> · Bienvenue
         </p>
 
-        <ul class="strips">
-          {
-            parcours.map((p) => (
-              <li class="strip">
-                <span class="strip__who">{p.ou}</span>
-                {p.quand && <span class="strip__when">{p.quand}</span>}
-                <p class="strip__stake">{p.enjeu}</p>
-              </li>
-            ))
-          }
-        </ul>
+        <h1 class="declaration">
+          Rien n’est de confiance par défaut. Ni le réseau, ni le client, <em>ni moi.</em>
+        </h1>
+
+        <div class="fil" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+
+        <p class="chapeau">
+          Je conçois des systèmes distribués et je dirige une équipe qui construit avec
+          des agents. J’écris ici sur ce qui tient en production, et sur <strong>ce qui cède</strong>.
+        </p>
+
+        <p class="aparte">
+          Quinze ans à construire des choses dont on ne parle que le jour où elles s’arrêtent.
+        </p>
       </div>
+
+      {/* Motif : l'étoffe. Cinq bandes tissées à part, cousues hors phase. */}
+      <figure class="etoffe" aria-hidden="true">
+        <div class="etoffe__bande">
+          <div class="etoffe__tissu"></div>
+          <div class="etoffe__frange"></div>
+        </div>
+        <div class="etoffe__bande">
+          <div class="etoffe__tissu"></div>
+          <div class="etoffe__frange"></div>
+        </div>
+        <div class="etoffe__bande">
+          <div class="etoffe__tissu"></div>
+          <div class="etoffe__frange"></div>
+        </div>
+        <div class="etoffe__bande">
+          <div class="etoffe__tissu"></div>
+          <div class="etoffe__frange"></div>
+        </div>
+        <div class="etoffe__bande">
+          <div class="etoffe__tissu"></div>
+          <div class="etoffe__frange"></div>
+        </div>
+      </figure>
     </div>
   </section>
 
-  <Seuil />
+  <section class="nappe" id="parcours">
+    <div class="cadre">
+      <div class="entete-section">
+        <div>
+          <p class="etiquette">Parcours</p>
+          <h2 class="titre-section">Trois timbres, une seule enveloppe.</h2>
+        </div>
+        <p class="entete-section__dit">
+          Chaque arrêt a laissé son cachet. Je n’en renie aucun.
+        </p>
+      </div>
 
-  <section class="band">
-    <div class="shell">
-      <h2 class="lede">Ce que j’écris, je l’ai cassé d’abord.</h2>
+      <ol class="timbres">
+        {
+          parcours.map((p) => (
+            <li class={`timbre ${p.vignette}`}>
+              <div class="timbre__papier">
+                <p class="timbre__greffe">
+                  <span>{p.numero}</span>
+                  <span>{p.quand}</span>
+                </p>
+                <div class="timbre__vignette" aria-hidden="true" />
+                <h3 class="timbre__ou">{p.ou}</h3>
+                <p class="timbre__enjeu">{p.enjeu}</p>
+              </div>
+
+              {
+                p.cachet && (
+                  <svg
+                    class="cachet"
+                    width="250"
+                    height="150"
+                    viewBox="0 0 250 150"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <defs>
+                      <path
+                        id="cachet-anneau"
+                        d="M75,75 m-52,0 a52,52 0 1,1 104,0 a52,52 0 1,1 -104,0"
+                      />
+                    </defs>
+                    <circle cx="75" cy="75" r="66" fill="none" stroke="currentColor" stroke-width="2.5" />
+                    <circle cx="75" cy="75" r="38" fill="none" stroke="currentColor" stroke-width="1.5" />
+                    <text
+                      font-family="Courier Prime, monospace"
+                      font-size="12"
+                      font-weight="700"
+                      fill="currentColor"
+                      letter-spacing="2"
+                    >
+                      <textPath href="#cachet-anneau">MONTRÉAL · QUÉBEC · MONTRÉAL ·</textPath>
+                    </text>
+                    <text
+                      x="75"
+                      y="80"
+                      text-anchor="middle"
+                      font-family="Courier Prime, monospace"
+                      font-size="15"
+                      font-weight="700"
+                      fill="currentColor">QC</text
+                    >
+                    <path d="M146 50 q11 -7 22 0 t22 0 t22 0 t22 0" fill="none" stroke="currentColor" stroke-width="2" />
+                    <path d="M146 66 q11 -7 22 0 t22 0 t22 0 t22 0" fill="none" stroke="currentColor" stroke-width="2" />
+                    <path d="M146 82 q11 -7 22 0 t22 0 t22 0 t22 0" fill="none" stroke="currentColor" stroke-width="2" />
+                    <path d="M146 98 q11 -7 22 0 t22 0 t22 0 t22 0" fill="none" stroke="currentColor" stroke-width="2" />
+                  </svg>
+                )
+              }
+            </li>
+          ))
+        }
+
+        <li class="timbre timbre--vierge">
+          <p class="etiquette">N° 4</p>
+          <p>Prochain timbre, à émettre.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <Lisiere motif="ecrits" />
+
+  <section class="nappe nappe--nuit" id="ecrits">
+    <div class="cadre ecrits">
+      <div class="ecrits__dire">
+        <p class="etiquette">Écrits</p>
+        <h2 class="ecrits__titre">Ce qui tient en production.</h2>
+        <a class="ecrits__tous" href="/ecrits/">Tous les écrits →</a>
+      </div>
 
       {
         recents.length === 0 ? (
@@ -85,11 +197,12 @@ const fmt = (d: Date) =>
             {recents.map((e) => (
               <li class="piece">
                 <a class="piece__link" href={`/ecrits/${e.id}/`}>
+                  <span class="piece__meta">
+                    <time datetime={e.data.date.toISOString()}>{fmt(e.data.date)}</time>
+                    {e.data.tags.length > 0 && <span>{e.data.tags.join(' · ')}</span>}
+                  </span>
                   <h3 class="piece__title">{e.data.title}</h3>
                   <p class="piece__blurb">{e.data.description}</p>
-                  <span class="piece__when">
-                    <time datetime={e.data.date.toISOString()}>{fmt(e.data.date)}</time>
-                  </span>
                 </a>
               </li>
             ))}
@@ -99,15 +212,59 @@ const fmt = (d: Date) =>
     </div>
   </section>
 
-  <Seuil />
+  <section class="nappe">
+    <div class="cadre racines">
+      {/* Motif : trois bandes de lieu — colombage, kente éwé, hiver. */}
+      <figure class="lieux">
+        <div class="lieu lieu--strasbourg">
+          <div class="lieu__tissu" aria-hidden="true"></div>
+          <div class="lieu__frange" aria-hidden="true"></div>
+          <p class="lieu__nom">Strasbourg</p>
+          <p class="lieu__coord">48°35′N</p>
+        </div>
+        <div class="lieu lieu--togo">
+          <div class="lieu__tissu" aria-hidden="true"></div>
+          <div class="lieu__frange" aria-hidden="true"></div>
+          <p class="lieu__nom">Togo</p>
+          <p class="lieu__coord">Racines</p>
+        </div>
+        <div class="lieu lieu--montreal">
+          <div class="lieu__tissu" aria-hidden="true"></div>
+          <div class="lieu__frange" aria-hidden="true"></div>
+          <p class="lieu__nom">Montréal</p>
+          <p class="lieu__coord">45°30′N</p>
+        </div>
+      </figure>
 
-  <section class="band band--deep">
-    <div class="shell">
-      <h2 class="lede">Je ne publie pas la liste de ce qui tourne chez moi.</h2>
-      <p class="open__lead">
-        Un inventaire d’infrastructure est une carte, et je préfère ne pas la dessiner.
-        Ce que j’utilise pour travailler, en revanche, est <a href="/outils/">sur la page outils</a>.
-      </p>
+      <div class="racines__dire">
+        <p class="etiquette">Racines · Strasbourg, Togo, Montréal</p>
+        <h2 class="racines__titre">Trois bandes, une seule étoffe.</h2>
+        <p class="racines__texte">
+          Métis franco-togolais, né à Strasbourg, Français et Canadien, installé à
+          Montréal. Le kente éwé se tisse en bandes étroites, à peine une main de large.
+          Chacune porte son motif, et l’étoffe n’apparaît qu’une fois les bandes cousues
+          côte à côte. Je suis fait de la même façon.
+        </p>
+        <p class="racines__note">
+          La première bande emprunte ses croisillons aux colombages de la Petite France,
+          et sa teinte au grès rose de la cathédrale.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="nappe">
+    <div class="cadre">
+      <div class="reserve">
+        <p class="etiquette">Réserve</p>
+        <h2 class="reserve__titre">Je ne publie pas la liste de ce qui tourne chez moi.</h2>
+        <p>
+          Un inventaire d’infrastructure est une carte, et je préfère ne pas la dessiner.
+          Ce que j’utilise pour travailler, en revanche, est <a href="/outils/"
+            >sur la page outils</a
+          >.
+        </p>
+      </div>
     </div>
   </section>
 </Base>

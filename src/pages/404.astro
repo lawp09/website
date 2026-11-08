@@ -1,19 +1,21 @@
 ---
 import Base from '../layouts/Base.astro';
-import Seuil from '../components/Seuil.astro';
 ---
 
 <Base title="Page introuvable — Philippe Lawson" description="Cette adresse ne mène à rien.">
-  <section class="band band--field open">
-    <div class="shell">
-      <h1 class="open__text">Rien ici.</h1>
-      <p class="open__lead">
+  <section class="nappe nappe--ouverture">
+    <div class="cadre">
+      <h1 class="declaration">Rien ici.</h1>
+
+      <div class="fil" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+
+      <p class="chapeau">
         Cette adresse ne correspond à aucune page. Les textes sont <a href="/ecrits/"
           >du côté des écrits</a
         >, et le reste part de <a href="/">l’accueil</a>.
       </p>
     </div>
   </section>
-
-  <Seuil />
 </Base>

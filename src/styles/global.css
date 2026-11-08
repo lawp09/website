@@ -1,62 +1,142 @@
 /* ===================================================================
-   Trame — le site est une étoffe.
+   Kente — le site est une étoffe cousue en bandes, et une enveloppe.
 
-   Deux traditions de tissage arrivent à la même structure : la bande
-   étroite ewe, cousue bord à bord et volontairement hors phase, et le
-   fukinsei japonais, qui refuse la symétrie. L'indigo est le pigment
-   que les deux partagent. Teint là où le site affirme, coton brut là
-   où il se lit. Le vermillon ne sert qu'une fois : le sceau.
+   Le kente éwé se tisse en bandes étroites, à peine une main de large,
+   chacune avec son motif ; l'étoffe n'apparaît qu'une fois les bandes
+   cousues côte à côte. La première bande emprunte ses croisillons aux
+   colombages de la Petite France et sa teinte au grès rose de la
+   cathédrale. Le parcours, lui, se lit en timbres : chaque arrêt a
+   laissé son cachet.
+
+   Lire docs/design.md avant de toucher ce fichier.
    =================================================================== */
 
-/* Polices servies depuis le site : aucune requête tierce au runtime,
-   donc aucune adresse IP de visiteur transmise à un tiers. */
+/* --- Les caractères ------------------------------------------------
+   Servis depuis le site : aucune requête tierce au runtime, donc aucune
+   adresse IP de visiteur transmise à un tiers. Fabrication des fichiers
+   (sous-ensemble, instanciation, glyphe ɔ ajouté) : docs/design.md. */
+
 @font-face {
-  font-family: 'Archivo';
-  src: url('/fonts/archivo.woff2') format('woff2');
-  font-weight: 400 700;
-  font-stretch: 75% 125%;
+  font-family: 'Zilla Slab';
+  src: url('/fonts/zilla-slab-bold.woff2') format('woff2');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: 'Newsreader';
-  src: url('/fonts/newsreader.woff2') format('woff2');
-  font-weight: 300 600;
+  font-family: 'Zilla Slab';
+  src: url('/fonts/zilla-slab-medium.woff2') format('woff2');
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: 'Newsreader';
-  src: url('/fonts/newsreader-italic.woff2') format('woff2');
-  font-weight: 300 600;
+  font-family: 'Zilla Slab';
+  src: url('/fonts/zilla-slab-medium-italic.woff2') format('woff2');
+  font-weight: 500;
   font-style: italic;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/literata.woff2') format('woff2');
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/literata-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Courier Prime';
+  src: url('/fonts/courier-prime.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Courier Prime';
+  src: url('/fonts/courier-prime-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- Les huit teintes de la planche -------------------------------- */
 
 :root {
-  --indigo: #16283c;
-  --indigo-deep: #0d1a28;
-  --cotton: #eae8e1;
-  --cotton-fold: #dedbd2;
-  --hair: #cfccc1;
+  --kaolin: #f1e7d3;
+  --ebene: #201812;
+  --laterite: #9e3f24;
+  --ocre: #c98b22;
+  --vert: #1f5a3c;
+  --jaune: #f0c21c;
+  --indigo: #22304a;
+  --gres-rose: #b86e5c;
 
-  --on-indigo: #dedcd3;
-  --on-indigo-quiet: #95a1ac;
-  --on-cotton: #16283c;
-  --on-cotton-quiet: #5a6670;
+  /* Teintes de service, dérivées des notes de la planche. */
+  --papier: #fffbf2;
+  --encre-douce: #5e5246;
+  --sur-ebene: #b9a992;
+  --filet-clair: #d5c6aa;
+  --filet-sombre: #4a3d31;
+  --bois: #3a2a1e;
+  --platre: #f4e9dd;
+  --indigo-clair: #2d3e5e;
+  --abricot: #e59a6e;
+  --sourdine: #9a8d7c;
+  --paille: #e8c687;
+  --pousse: #9ec9ae;
 
-  --saffron: #d4a23c;
-  --saffron-ink: #7a5410;
-  --shu: #b3351f;
+  /* Le grain du tissage : la trame horizontale qui casse l'aplat de toute
+     bande. Déclaré ici parce que les six motifs le superposent. */
+  --grain: repeating-linear-gradient(0deg, rgb(32 24 18 / 14%) 0 1px, transparent 1px 3px);
 
-  /* Archivo porte la structure, Newsreader porte la voix. */
-  --voice: 'Archivo', system-ui, sans-serif;
-  --read: 'Newsreader', Georgia, serif;
+  /* Zilla Slab affiche, Literata se lit, Courier Prime étiquette.
+     Literata suit Courier Prime dans la pile : le « → » manque à
+     Courier Prime, et c'est la seule police chargée qui l'a. */
+  --affiche: 'Zilla Slab', Georgia, serif;
+  --lecture: 'Literata', Georgia, serif;
+  --machine: 'Courier Prime', 'Literata', ui-monospace, monospace;
 
-  --rail: 4.25rem;
-  --gutter: clamp(1.5rem, 5vw, 4.5rem);
-  --measure: 66ch;
+  --gouttiere: clamp(1.25rem, 5vw, 4rem);
+  --cadre: 75rem;
+  --mesure: 62ch;
 }
+
+/* --- Les surfaces -------------------------------------------------
+   Une nappe est une surface teinte. Elle ne porte pas des couleurs,
+   elle re-pointe les jetons sémantiques : un composant écrit une fois
+   fonctionne sur kaolin comme sur ébène. Les contrastes de chaque
+   couple sont tabulés dans docs/design.md. */
+
+.nappe,
+body {
+  --fond: var(--kaolin);
+  --encre: var(--ebene);
+  --encre-calme: var(--encre-douce);
+  --filet: var(--filet-clair);
+  --accent: var(--laterite);
+  --signal: var(--laterite);
+
+  background: var(--fond);
+  color: var(--encre);
+}
+
+.nappe--nuit {
+  --fond: var(--ebene);
+  --encre: var(--kaolin);
+  --encre-calme: var(--sur-ebene);
+  --filet: var(--filet-sombre);
+  --accent: var(--ocre);
+  --signal: var(--abricot);
+}
+
+/* --- Socle --------------------------------------------------------- */
 
 *,
 *::before,
@@ -70,11 +150,9 @@ html {
 
 body {
   margin: 0;
-  background: var(--cotton);
-  color: var(--on-cotton);
-  font-family: var(--read);
+  font-family: var(--lecture);
   font-size: 1.0625rem;
-  line-height: 1.7;
+  line-height: 1.65;
   font-synthesis: none;
   overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
@@ -85,8 +163,9 @@ h2,
 h3,
 h4 {
   margin: 0;
-  font-weight: 400;
-  line-height: 1.1;
+  font-family: var(--affiche);
+  font-weight: 700;
+  line-height: 1.05;
 }
 
 p {
@@ -98,461 +177,912 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--saffron-ink);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
-.band--field :focus-visible,
-.band--deep :focus-visible,
-.masthead :focus-visible,
-.spine :focus-visible {
-  outline-color: var(--saffron);
-}
-
-/* Le sceau : seule apparition du vermillon sur tout le site. */
-.seal-source {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
-.seal {
-  display: block;
-  flex: none;
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
-/* --- Le métier : rail de chaîne à gauche, étoffe à droite --------- */
-
-.loom {
-  display: grid;
-  grid-template-columns: 1fr;
-  min-height: 100vh;
-}
-
-@media (min-width: 62rem) {
-  .loom {
-    grid-template-columns: var(--rail) 1fr;
-  }
-}
-
-/* Le rail porte le nom comme un dos de livre : il reste là quand les
-   bandes défilent, ce qui laisse l'en-tête se réduire à la navigation. */
-.spine {
-  display: none;
-}
-
-@media (min-width: 62rem) {
-  .spine {
-    display: block;
-    position: sticky;
-    top: 0;
-    align-self: start;
-    height: 100vh;
-    padding-block: 1.75rem 1.5rem;
-    background: var(--indigo-deep);
-    color: var(--on-indigo);
-  }
-
-  .spine__inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
-  }
-
-  .spine__name,
-  .spine__place {
-    writing-mode: vertical-rl;
-    font-family: var(--voice);
-    font-weight: 600;
-    font-variation-settings: 'wdth' 85;
-    letter-spacing: 0.055em;
-  }
-
-  .spine__name {
-    font-size: 0.8125rem;
-    text-decoration: none;
-  }
-
-  .spine__name:hover {
-    color: var(--saffron);
-  }
-
-  .spine .seal {
-    margin-block: 1.25rem;
-  }
-
-  .spine__place {
-    margin-top: auto;
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.09em;
-    color: var(--on-indigo-quiet);
-  }
-}
-
-/* L'étoffe occupe toute la hauteur : sur une page courte, la dernière
-   bande s'étire au lieu de laisser le pied flotter au milieu. */
-.cloth {
+/* La page tient toute la hauteur : sur une page courte, le pied reste
+   en bas au lieu de flotter au milieu. */
+.feuille {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-.cloth > main {
+.feuille > main {
   flex: 1 1 auto;
 }
 
-/* --- En-tête ------------------------------------------------------ */
-
-.masthead {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.75rem;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 1.5rem var(--gutter) 0;
-  background: var(--indigo);
+.cadre {
+  max-width: var(--cadre);
+  margin-inline: auto;
+  padding-inline: var(--gouttiere);
 }
 
-.masthead__name {
-  font-family: var(--voice);
-  font-size: 0.875rem;
-  font-weight: 600;
-  font-variation-settings: 'wdth' 112;
-  color: var(--on-indigo);
+/* Un élément flex refuse par défaut de rétrécir sous son mot le plus long
+   (`min-width: auto`). À 320 px avec le texte zoomé à 200 %, un titre de 64 px
+   pousse alors la page hors de l'écran. On rend la main à `overflow-wrap`. */
+.entete > *,
+.entete-section > *,
+.ouverture > *,
+.ecrits > *,
+.racines > *,
+.signature,
+.signature__nom,
+.timbre {
+  min-width: 0;
+}
+
+/* --- Motif : bandes cousues ---------------------------------------
+   Trois gradients superposés par bande — les fils de chaîne en
+   vertical, les blocs de trame, et un grain horizontal qui casse
+   l'aplat. Les motifs ne s'alignent pas d'une lisière à l'autre : le
+   décalage est le savoir-faire, pas un défaut. */
+
+.lisiere {
+  height: 0.75rem;
+}
+
+.lisiere--tete {
+  background-image:
+    var(--grain),
+    repeating-linear-gradient(
+      90deg,
+      var(--ebene) 0 26px,
+      var(--ocre) 26px 30px,
+      var(--laterite) 30px 52px,
+      var(--kaolin) 52px 54px,
+      var(--vert) 54px 74px,
+      var(--kaolin) 74px 76px
+    );
+}
+
+.lisiere--ecrits {
+  height: 0.875rem;
+  background-image:
+    var(--grain),
+    repeating-linear-gradient(
+      90deg,
+      var(--ocre) 0 34px,
+      var(--ebene) 34px 38px,
+      var(--laterite) 38px 58px,
+      var(--kaolin) 58px 60px,
+      var(--vert) 60px 80px,
+      var(--kaolin) 80px 82px
+    );
+}
+
+/* --- En-tête -------------------------------------------------------
+   Le nom reste visible à toutes les largeurs : c'est la seule marque
+   d'auteur du site depuis que le rail vertical a disparu. */
+
+.entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  padding-block: 1.75rem 0;
+}
+
+.signature {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   text-decoration: none;
 }
 
-@media (min-width: 62rem) {
-  .masthead {
-    justify-content: flex-end;
-  }
-
-  /* Le rail porte déjà le nom : pas de doublon dans l'arbre d'accessibilité. */
-  .masthead__name {
-    display: none;
-  }
+/* Motif : damier-monogramme. Un carré de trame en guise de marque. */
+.monogramme {
+  flex: none;
+  width: 2.875rem;
+  height: 2.875rem;
+  background-image: conic-gradient(
+    var(--ebene) 25%,
+    var(--laterite) 0 50%,
+    var(--ebene) 0 75%,
+    var(--ocre) 0
+  );
+  background-size: 50% 50%;
+  outline: 2px solid var(--ebene);
+  outline-offset: 3px;
 }
 
-.masthead__nav {
+.signature__nom {
   display: flex;
-  gap: 1.5rem;
-  font-family: var(--voice);
-  font-size: 0.875rem;
-  font-weight: 500;
-  font-variation-settings: 'wdth' 112;
+  flex-direction: column;
+  line-height: 1.15;
 }
 
-.masthead__nav a {
-  padding-bottom: 0.2rem;
-  border-bottom: 1px solid transparent;
-  color: var(--on-indigo);
+.signature__nom strong {
+  font-family: var(--affiche);
+  font-weight: 700;
+  font-size: 1.375rem;
+  letter-spacing: 0.01em;
+}
+
+.signature__origines {
+  font-family: var(--machine);
+  font-size: 0.8125rem;
+  color: var(--encre-calme);
+}
+
+.signature:hover b {
+  color: var(--accent);
+}
+
+.navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.75rem;
+  font-family: var(--machine);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.navigation a {
+  padding-block: 0.75rem;
+  border-bottom: 2px solid transparent;
   text-decoration: none;
   transition: color 140ms ease, border-color 140ms ease;
 }
 
-.masthead__nav a:hover,
-.masthead__nav a[aria-current='page'] {
-  color: var(--saffron);
-  border-bottom-color: var(--saffron);
+.navigation a:hover,
+.navigation a[aria-current='page'] {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
-/* --- Bandes : le changement de fond EST la frontière -------------- */
+/* --- Sections ------------------------------------------------------ */
 
-.band {
-  padding: clamp(3rem, 7vw, 5.5rem) var(--gutter);
+.nappe {
+  padding-block: clamp(3.5rem, 8vw, 7rem);
 }
 
-.band--field {
-  background: var(--indigo);
-  color: var(--on-indigo);
+.nappe--ouverture {
+  padding-block: clamp(3rem, 7vw, 6.5rem);
 }
 
-.band--deep {
-  background: var(--indigo-deep);
-  color: var(--on-indigo);
+.etiquette {
+  font-family: var(--machine);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--encre-calme);
 }
 
-.shell {
-  max-width: 64rem;
+.titre-section {
+  margin-top: 0.75rem;
+  font-size: clamp(2rem, 4.4vw, 3.5rem);
+  line-height: 1.02;
 }
 
-/* --- Le seuil : bandes étroites cousues bord à bord, hors phase ---
-   Chaque segment décale le même motif, comme des lés tissés séparément
-   puis assemblés. L'alignement raté est le savoir-faire, pas un défaut. */
-
-.seuil {
+.entete-section {
   display: flex;
-  height: clamp(1.75rem, 3.4vw, 2.5rem);
-  overflow: hidden;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2.5rem;
+  margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
 }
 
-.seuil span {
-  display: block;
-  background:
-    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.24) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(
-      90deg,
-      var(--indigo) 0 13px,
-      var(--indigo-deep) 13px 19px,
-      var(--indigo) 19px 24px,
-      var(--saffron) 24px 26px,
-      var(--indigo-deep) 26px 41px,
-      var(--indigo) 41px 47px,
-      var(--indigo-deep) 47px 50px,
-      var(--indigo) 50px 71px,
-      var(--saffron) 71px 72px,
-      var(--indigo-deep) 72px 89px,
-      var(--indigo) 89px 97px
-    );
+.entete-section__dit {
+  max-width: 34ch;
+  color: var(--encre-calme);
 }
 
-.seuil span:nth-child(1) { flex: 1.1;  background-position-x: 0, 0; }
-.seuil span:nth-child(2) { flex: 0.78; background-position-x: 0, 31px; }
-.seuil span:nth-child(3) { flex: 1.3;  background-position-x: 0, 64px; }
-.seuil span:nth-child(4) { flex: 0.66; background-position-x: 0, 12px; }
-.seuil span:nth-child(5) { flex: 1.02; background-position-x: 0, 47px; }
+/* --- Ouverture ----------------------------------------------------- */
 
-/* --- Ouverture ---------------------------------------------------- */
-
-.open {
-  padding-top: clamp(3rem, 10vh, 6rem);
+.ouverture {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 3.5rem 4.5rem;
 }
 
-.open__text {
-  max-width: 21ch;
-  font-size: clamp(2.45rem, 6.2vw, 4.5rem);
-  line-height: 1.04;
-  letter-spacing: -0.021em;
+.ouverture__dire {
+  flex: 999 1 33rem;
+  min-width: 0;
 }
 
-.open__text em {
-  font-style: italic;
-  font-weight: 300;
+.salut {
+  margin-bottom: 1.75rem;
+  font-family: var(--machine);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--accent);
 }
 
-.open__lead {
-  max-width: 48ch;
-  margin-top: clamp(1.75rem, 4vw, 2.5rem);
-  font-size: 1.1875rem;
-  line-height: 1.65;
-  color: var(--on-indigo-quiet);
+.declaration {
+  max-width: 16ch;
+  font-size: clamp(2.5rem, 6.2vw, 5.375rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
 }
 
-.open__lead strong {
-  font-weight: 500;
-  color: var(--on-indigo);
+/* L'emphase reste du <em> : c'est une mise en relief, pas du gras decoratif.
+   Elle se dit ici en couleur plutot qu'en italique. */
+.declaration em {
+  font-style: normal;
+  font-weight: inherit;
+  color: var(--accent);
 }
 
-.open__lead a {
-  text-decoration-color: var(--saffron);
-  text-underline-offset: 0.18em;
+/* Motif : trois segments de fil, inégaux — la trame reprise à la main. */
+.fil {
+  display: flex;
+  gap: 4px;
+  margin-block: 2.5rem 1.5rem;
+}
+
+.fil span {
+  height: 6px;
+}
+
+.fil span:nth-child(1) {
+  width: 2.5rem;
+  background: var(--ebene);
+}
+
+.fil span:nth-child(2) {
+  width: 0.625rem;
+  background: var(--ocre);
+}
+
+.fil span:nth-child(3) {
+  width: 1.375rem;
+  background: var(--laterite);
+}
+
+.chapeau {
+  max-width: 46ch;
+  font-size: 1.25rem;
+  color: var(--encre-calme);
+}
+
+.chapeau strong {
+  font-weight: 600;
+  color: var(--encre);
+}
+
+.chapeau a {
+  text-decoration-color: var(--accent);
   text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
 }
 
-.open__lead a:hover {
-  color: var(--saffron);
+.chapeau a:hover {
+  color: var(--accent);
 }
 
-/* --- Le parcours, tissé ------------------------------------------- */
-
-.weave {
-  margin-top: clamp(3rem, 7vw, 5rem);
+.aparte {
+  max-width: 48ch;
+  margin-top: 1.5rem;
+  font-family: var(--machine);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--encre-calme);
 }
 
-.weave__said {
-  max-width: 44ch;
-  font-style: italic;
-  color: var(--on-indigo-quiet);
+/* Motif : l'étoffe. Cinq bandes tissées à part, cousues hors phase, chacune
+   finie d'une frange. Décorative, donc affichée seulement là où elle tient à
+   côté du texte : en dessous de 64rem, elle passerait à la ligne et poserait
+   500 px de décor entre l'ouverture et le parcours. */
+
+.etoffe {
+  display: none;
 }
 
-.strips {
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: 2rem;
-  margin: 2.5rem 0 0;
-  padding: 0;
+@media (min-width: 64rem) {
+  .etoffe {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: flex-start;
+    gap: 2px;
+    margin: 0;
+  }
+
+  .etoffe__bande {
+    display: flex;
+    flex-direction: column;
+    width: 3.75rem;
+  }
+
+  .etoffe__frange {
+    height: 1.125rem;
+  }
+
+  .etoffe__bande:nth-child(1) { margin-top: 0; }
+  .etoffe__bande:nth-child(2) { margin-top: 2.75rem; }
+  .etoffe__bande:nth-child(3) { margin-top: 0.75rem; }
+  .etoffe__bande:nth-child(4) { margin-top: 4.375rem; }
+  .etoffe__bande:nth-child(5) { margin-top: 1.625rem; }
+
+  .etoffe__bande:nth-child(1) .etoffe__tissu {
+    height: 31.25rem;
+    background-image:
+      var(--grain),
+      repeating-linear-gradient(
+        180deg,
+        transparent 0 64px,
+        var(--ocre) 64px 96px,
+        var(--ebene) 96px 100px,
+        var(--ocre) 100px 116px,
+        transparent 116px 150px,
+        var(--laterite) 150px 178px,
+        transparent 178px 210px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        var(--ebene) 0 10px,
+        var(--kaolin) 10px 12px,
+        var(--vert) 12px 22px,
+        var(--kaolin) 22px 24px,
+        var(--ebene) 24px 36px,
+        var(--ocre) 36px 38px,
+        var(--ebene) 38px 60px
+      );
+  }
+
+  .etoffe__bande:nth-child(1) .etoffe__frange {
+    background: repeating-linear-gradient(90deg, var(--ebene) 0 2px, transparent 2px 5px);
+  }
+
+  .etoffe__bande:nth-child(2) .etoffe__tissu {
+    height: 33.75rem;
+    background-image:
+      var(--grain),
+      repeating-linear-gradient(
+        180deg,
+        transparent 0 40px,
+        var(--ebene) 40px 72px,
+        var(--jaune) 72px 76px,
+        var(--ebene) 76px 108px,
+        transparent 108px 170px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        var(--laterite) 0 14px,
+        var(--ebene) 14px 17px,
+        var(--laterite) 17px 30px,
+        var(--ocre) 30px 33px,
+        var(--laterite) 33px 60px
+      );
+  }
+
+  .etoffe__bande:nth-child(2) .etoffe__frange {
+    background: repeating-linear-gradient(90deg, var(--laterite) 0 2px, transparent 2px 5px);
+  }
+
+  .etoffe__bande:nth-child(3) .etoffe__tissu {
+    height: 30.625rem;
+    background-image:
+      var(--grain),
+      repeating-linear-gradient(
+        180deg,
+        transparent 0 90px,
+        var(--jaune) 90px 104px,
+        var(--vert) 104px 110px,
+        var(--jaune) 110px 124px,
+        transparent 124px 190px,
+        var(--kaolin) 190px 196px,
+        transparent 196px 230px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        var(--vert) 0 18px,
+        var(--ebene) 18px 22px,
+        var(--vert) 22px 38px,
+        var(--laterite) 38px 42px,
+        var(--vert) 42px 60px
+      );
+  }
+
+  .etoffe__bande:nth-child(3) .etoffe__frange {
+    background: repeating-linear-gradient(90deg, var(--vert) 0 2px, transparent 2px 5px);
+  }
+
+  .etoffe__bande:nth-child(4) .etoffe__tissu {
+    height: 32.5rem;
+    background-image:
+      var(--grain),
+      repeating-linear-gradient(
+        180deg,
+        transparent 0 30px,
+        var(--laterite) 30px 58px,
+        transparent 58px 92px,
+        var(--ocre) 92px 124px,
+        var(--ebene) 124px 128px,
+        var(--ocre) 128px 144px,
+        transparent 144px 210px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        var(--ebene) 0 10px,
+        var(--kaolin) 10px 12px,
+        var(--vert) 12px 22px,
+        var(--kaolin) 22px 24px,
+        var(--ebene) 24px 36px,
+        var(--ocre) 36px 38px,
+        var(--ebene) 38px 60px
+      );
+  }
+
+  .etoffe__bande:nth-child(4) .etoffe__frange {
+    background: repeating-linear-gradient(90deg, var(--ebene) 0 2px, transparent 2px 5px);
+  }
+
+  .etoffe__bande:nth-child(5) .etoffe__tissu {
+    height: 29.375rem;
+    background-image:
+      var(--grain),
+      repeating-linear-gradient(
+        180deg,
+        transparent 0 110px,
+        var(--ebene) 110px 140px,
+        var(--kaolin) 140px 144px,
+        var(--ebene) 144px 174px,
+        transparent 174px 220px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        var(--ocre) 0 12px,
+        var(--ebene) 12px 15px,
+        var(--ocre) 15px 30px,
+        var(--laterite) 30px 36px,
+        var(--ocre) 36px 60px
+      );
+  }
+
+  .etoffe__bande:nth-child(5) .etoffe__frange {
+    background: repeating-linear-gradient(90deg, var(--ocre) 0 2px, transparent 2px 5px);
+  }
+}
+
+/* --- Le parcours, en timbres --------------------------------------
+   Un timbre par employeur, numéroté dans l'ordre d'émission. La
+   dentelure vient de trous en gradient radial posés à cheval sur le
+   bord ; le cachet est du SVG inline. `overflow-x: clip` contient le
+   cachet qui mord hors du timbre sans créer de défilement de page —
+   contrairement à `hidden`, `clip` n'ouvre pas de conteneur de
+   défilement. */
+
+.timbres {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 2.5rem 2.25rem;
+  margin-block: 0;
+  margin-inline: -0.75rem;
+  /* La gouttière rendue au `clip`, qui rognerait sinon le coin du premier
+     timbre, que sa rotation fait dépasser. */
+  padding: 0 0.75rem;
+  overflow-x: clip;
   list-style: none;
 }
 
-/* Largeurs inégales et départs décalés : trois lés tissés à part. */
-@media (min-width: 48rem) {
-  .strips {
-    grid-template-columns: 1.08fr 0.92fr 1.24fr;
-    column-gap: 2.25rem;
-    row-gap: 0;
-  }
-
-  .strip:nth-child(2) { margin-top: 2.75rem; }
-  .strip:nth-child(3) { margin-top: 5.5rem; }
+.timbre {
+  position: relative;
+  flex: 1 1 14rem;
+  max-width: 17.5rem;
+  padding: 0.625rem;
+  background-color: var(--papier);
+  background-image: radial-gradient(circle, var(--fond) 4px, transparent 4.5px);
+  background-size: 14px 14px;
+  background-position: -7px -7px;
 }
 
-.strip {
-  padding-top: 1.1rem;
-  border-top: 2px solid var(--saffron);
+.timbre:nth-child(1) { transform: rotate(-1.5deg); }
+.timbre:nth-child(2) { transform: rotate(1deg); }
+.timbre:nth-child(3) { transform: rotate(-0.5deg); }
+
+.timbre__papier {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  border: 1px solid var(--ebene);
+  background: var(--papier);
 }
 
-.strip__who {
-  display: block;
-  font-family: var(--voice);
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: -0.005em;
+.timbre__greffe {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--machine);
+  font-size: 0.8125rem;
+  font-weight: 700;
 }
 
-.strip__when {
-  display: block;
-  margin-top: 0.15rem;
-  font-family: var(--voice);
-  font-size: 0.75rem;
+/* Une vignette par timbre : un aplat de motif, jamais une image. */
+.timbre__vignette {
+  height: 10.625rem;
+}
+
+.timbre--air .timbre__vignette {
+  background-image:
+    linear-gradient(180deg, transparent 0 70%, var(--laterite) 70% 100%),
+    radial-gradient(circle at 68% 70%, var(--ocre) 0 28px, transparent 29px),
+    repeating-linear-gradient(180deg, var(--indigo) 0 10px, var(--indigo-clair) 10px 12px);
+}
+
+.timbre--ville .timbre__vignette {
+  background-color: var(--laterite);
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 22px, var(--kaolin) 22px 25px),
+    repeating-linear-gradient(180deg, transparent 0 22px, var(--kaolin) 22px 25px);
+}
+
+.timbre--koios .timbre__vignette {
+  background-image: repeating-radial-gradient(
+    circle at 50% 56%,
+    var(--vert) 0 8px,
+    var(--kaolin) 8px 10px
+  );
+}
+
+.timbre__ou {
+  font-size: 1.5rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.timbre__enjeu {
+  font-family: var(--machine);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--encre-calme);
+}
+
+/* Motif : cachet d'oblitération. Texte sur cercle, barres d'annulation. */
+/* Le cachet chevauche le bord droit du timbre : l'anneau et son texte se
+   lisent sur le kaolin, les barres d'annulation partent dans la gouttière.
+   Le timbre qui le porte monte d'un cran, sans quoi le suivant — frère
+   positionné, donc peint après — recouvrirait les barres. */
+.cachet {
+  position: absolute;
+  top: 3.5rem;
+  right: -7.5rem;
+  color: var(--ebene);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.timbre:has(.cachet) {
+  z-index: 1;
+}
+
+/* Le timbre à émettre : un cadre vide, pas un timbre. */
+.timbre--vierge {
+  display: flex;
+  flex: 0 1 12.5rem;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 21.25rem;
+  padding: 1.25rem;
+  border: 2px dashed var(--encre-calme);
+  background: none;
+  transform: none;
+}
+
+.timbre--vierge p {
+  color: var(--encre-calme);
+}
+
+.timbre--vierge p + p {
+  margin-top: 0.25rem;
+  font-family: var(--affiche);
+  font-style: italic;
   font-weight: 500;
-  font-variation-settings: 'wdth' 92;
-  letter-spacing: 0.045em;
-  color: var(--on-indigo-quiet);
+  font-size: 1.5rem;
+  line-height: 1.15;
 }
 
-.strip__stake {
-  margin-top: 0.6rem;
-  font-size: 0.9688rem;
-  line-height: 1.6;
-  color: var(--on-indigo-quiet);
+/* --- Les écrits ---------------------------------------------------- */
+
+.ecrits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem 4.5rem;
 }
 
-/* --- Titres de section : une phrase, pas une étiquette ------------ */
-
-.lede {
-  max-width: 30ch;
-  font-size: clamp(1.5rem, 3.1vw, 2rem);
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+.ecrits__dire {
+  flex: 1 1 17.5rem;
 }
 
-.lede + .pieces,
-.lede + .kit {
-  margin-top: 2.75rem;
+.ecrits__titre {
+  max-width: 13ch;
+  margin-top: 0.75rem;
+  font-size: clamp(1.875rem, 3.6vw, 2.875rem);
+  line-height: 1.05;
 }
 
-/* --- Liste d'écrits ----------------------------------------------- */
+.ecrits__tous {
+  display: inline-block;
+  margin-top: 1.75rem;
+  padding-block: 0.625rem;
+  font-family: var(--machine);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-underline-offset: 6px;
+}
+
+.ecrits__tous:hover {
+  color: var(--accent);
+}
 
 .pieces {
-  max-width: 52rem;
+  flex: 999 1 35rem;
+  min-width: 0;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .piece {
-  border-top: 1px solid var(--hair);
+  border-top: 1px solid var(--filet);
 }
 
 .piece:last-child {
-  border-bottom: 1px solid var(--hair);
+  border-bottom: 1px solid var(--filet);
 }
 
 .piece__link {
   display: block;
-  position: relative;
-  margin-inline: -1.25rem;
-  padding: 1.5rem 1.25rem 1.6rem;
+  padding-block: 2rem;
   text-decoration: none;
-  transition: background-color 160ms ease;
 }
 
-/* Le fil de trame apparaît le long de la bande au survol. */
-.piece__link::before {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  width: 3px;
-  background: var(--saffron-ink);
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+.piece__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.25rem;
+  margin-bottom: 0.625rem;
+  font-family: var(--machine);
+  font-size: 0.875rem;
+  color: var(--encre-calme);
 }
 
-.piece__link:hover,
-.piece__link:focus-visible {
-  background: var(--cotton-fold);
-}
-
-.piece__link:hover::before,
-.piece__link:focus-visible::before {
-  transform: scaleY(1);
-}
-
-.piece__link:focus-visible {
-  outline: 2px solid var(--saffron-ink);
-  outline-offset: -2px;
+.piece__flag {
+  font-weight: 700;
+  color: var(--signal);
 }
 
 .piece__title {
-  margin-bottom: 0.35rem;
-  font-size: clamp(1.3rem, 2.5vw, 1.6rem);
-  line-height: 1.25;
-  letter-spacing: -0.012em;
+  margin-bottom: 0.625rem;
+  font-weight: 500;
+  font-size: clamp(1.625rem, 2.6vw, 2.125rem);
+  line-height: 1.2;
 }
 
 .piece__link:hover .piece__title {
   text-decoration: underline;
-  text-decoration-color: var(--saffron-ink);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.16em;
+  text-decoration-color: var(--accent);
 }
 
 .piece__blurb {
-  max-width: var(--measure);
-  margin-bottom: 0.7rem;
-  color: var(--on-cotton-quiet);
+  max-width: 60ch;
+  color: var(--encre-calme);
 }
 
-.piece__when {
-  font-family: var(--voice);
-  font-size: 0.75rem;
-  font-weight: 500;
-  font-variation-settings: 'wdth' 92;
-  letter-spacing: 0.045em;
-  color: var(--on-cotton-quiet);
-}
-
-.piece__flag {
-  margin-left: 0.7rem;
-  font-family: var(--voice);
-  font-size: 0.75rem;
-  font-weight: 600;
-  font-variation-settings: 'wdth' 92;
-  color: var(--saffron-ink);
-}
-
+/* L'attente a sa place dans la liste : une entrée, pas un vide. Elle tient
+   la même colonne que `.pieces`, dont elle prend le relais. */
 .pieces__none {
-  max-width: var(--measure);
-  margin-top: 1.6rem;
-  color: var(--on-cotton-quiet);
+  flex: 999 1 35rem;
+  min-width: 0;
+  padding-block: 2rem;
+  border-top: 1px solid var(--filet);
+  border-bottom: 1px solid var(--filet);
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--encre-calme);
 }
 
-/* --- Outils : sa propre structure, pas celle des écrits ----------- */
+/* --- Racines ------------------------------------------------------- */
 
-.kit__why {
-  max-width: 46ch;
-  margin-top: 1.6rem;
-  font-size: 1.1875rem;
-  line-height: 1.65;
-  color: var(--on-cotton-quiet);
+.racines {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2rem 4.5rem;
 }
 
-.kit__why + .kit {
-  margin-top: clamp(2.5rem, 6vw, 3.5rem);
+.racines__dire {
+  flex: 1 1 26rem;
+  min-width: 0;
 }
+
+.racines__titre {
+  max-width: 18ch;
+  margin-block: 0.75rem 1.25rem;
+  font-size: clamp(1.875rem, 3.4vw, 2.75rem);
+  line-height: 1.05;
+}
+
+.racines__texte {
+  max-width: 52ch;
+  color: var(--encre-calme);
+}
+
+.racines__note {
+  max-width: 52ch;
+  margin-top: 1.125rem;
+  font-family: var(--machine);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--encre-calme);
+}
+
+/* Trois bandes de lieu, cousues hors phase. */
+.lieux {
+  display: flex;
+  flex: 0 1 18.5rem;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+  margin: 0;
+}
+
+/* Les bandes se partagent la place du conteneur au lieu de la réclamer : une
+   largeur en `rem` déborderait de l'écran au zoom texte, une largeur en `vw`
+   ignorerait la gouttière. */
+.lieu {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 6rem;
+}
+
+.lieu:nth-child(2) { margin-top: 2.25rem; }
+.lieu:nth-child(3) { margin-top: 0.875rem; }
+
+.lieu__tissu {
+  height: 21.25rem;
+}
+
+.lieu__frange {
+  height: 1.125rem;
+}
+
+.lieu__nom {
+  margin-top: 0.75rem;
+  font-family: var(--machine);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.lieu__coord {
+  font-family: var(--machine);
+  font-size: 0.8125rem;
+  color: var(--encre-calme);
+}
+
+/* Motif : colombage. Poteaux, sablières et croix de Saint-André, plus
+   une bande de grès rose — la Petite France. */
+.lieu--strasbourg .lieu__tissu {
+  background-color: var(--platre);
+  background-image:
+    var(--grain),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 132px,
+      var(--gres-rose) 132px 168px,
+      var(--ebene) 168px 172px,
+      var(--gres-rose) 172px 190px,
+      transparent 190px 220px
+    ),
+    linear-gradient(
+      to top right,
+      transparent calc(50% - 2px),
+      var(--bois) calc(50% - 2px) calc(50% + 2px),
+      transparent calc(50% + 2px)
+    ),
+    linear-gradient(
+      to bottom right,
+      transparent calc(50% - 2px),
+      var(--bois) calc(50% - 2px) calc(50% + 2px),
+      transparent calc(50% + 2px)
+    ),
+    linear-gradient(90deg, var(--bois) 0 4px, transparent 4px),
+    linear-gradient(180deg, var(--bois) 0 4px, transparent 4px);
+  background-size: auto, auto, 32px 44px, 32px 44px, 32px 44px, 32px 44px;
+}
+
+.lieu--strasbourg .lieu__frange {
+  background: repeating-linear-gradient(90deg, var(--bois) 0 2px, transparent 2px 5px);
+}
+
+.lieu--togo .lieu__tissu {
+  background-image:
+    var(--grain),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 70px,
+      var(--laterite) 70px 100px,
+      var(--kaolin) 100px 104px,
+      var(--laterite) 104px 120px,
+      transparent 120px 170px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--vert) 0 14px,
+      var(--jaune) 14px 18px,
+      var(--vert) 18px 34px,
+      var(--ebene) 34px 37px,
+      var(--vert) 37px 62px,
+      var(--jaune) 62px 66px,
+      var(--vert) 66px 96px
+    );
+}
+
+.lieu--togo .lieu__frange {
+  background: repeating-linear-gradient(90deg, var(--vert) 0 2px, transparent 2px 5px);
+}
+
+.lieu--montreal .lieu__tissu {
+  background-image:
+    var(--grain),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 50px,
+      var(--kaolin) 50px 64px,
+      var(--indigo) 64px 68px,
+      var(--kaolin) 68px 82px,
+      transparent 82px 150px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--indigo) 0 20px,
+      var(--kaolin) 20px 22px,
+      var(--indigo) 22px 46px,
+      var(--ocre) 46px 49px,
+      var(--indigo) 49px 96px
+    );
+}
+
+.lieu--montreal .lieu__frange {
+  background: repeating-linear-gradient(90deg, var(--indigo) 0 2px, transparent 2px 5px);
+}
+
+/* --- La carte, et ce qu'elle n'est pas ----------------------------- */
+
+.reserve {
+  max-width: 44ch;
+}
+
+.reserve__titre {
+  max-width: 24ch;
+  margin-top: 0.75rem;
+  font-size: clamp(1.625rem, 3vw, 2.25rem);
+  line-height: 1.1;
+}
+
+.reserve p {
+  margin-top: 1.25rem;
+  color: var(--encre-calme);
+}
+
+.reserve a {
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.reserve a:hover {
+  color: var(--accent);
+}
+
+/* --- Outils -------------------------------------------------------- */
 
 .kit {
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem 2.5rem;
-  margin: 0;
+  margin: clamp(2.5rem, 6vw, 3.5rem) 0 0;
   padding: 0;
   list-style: none;
 }
@@ -565,94 +1095,91 @@ a {
 
 .kit__group {
   padding-top: 1rem;
-  border-top: 1px solid var(--hair);
+  border-top: 2px solid var(--accent);
 }
 
 .kit__what {
-  margin-bottom: 0.65rem;
-  font-family: var(--voice);
+  margin-bottom: 0.625rem;
+  font-family: var(--machine);
   font-size: 0.9375rem;
-  font-weight: 600;
-  letter-spacing: -0.004em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .kit__items {
   margin: 0;
   padding: 0;
   list-style: none;
-  color: var(--on-cotton-quiet);
+  color: var(--encre-calme);
 }
 
 .kit__items li + li {
   margin-top: 0.3rem;
 }
 
-/* --- Article ------------------------------------------------------ */
+/* --- Article ------------------------------------------------------- */
 
 .article__head {
-  max-width: var(--measure);
+  max-width: var(--mesure);
   margin-bottom: clamp(2.5rem, 6vw, 4rem);
 }
 
 .article__title {
-  font-size: clamp(2rem, 5vw, 3.1rem);
-  line-height: 1.1;
-  letter-spacing: -0.018em;
+  font-size: clamp(2.125rem, 5vw, 3.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.012em;
 }
 
 .article__meta {
-  margin-top: 1rem;
-  font-family: var(--voice);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  font-variation-settings: 'wdth' 92;
-  letter-spacing: 0.045em;
-  color: var(--on-cotton-quiet);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1.25rem;
+  font-family: var(--machine);
+  font-size: 0.875rem;
+  color: var(--encre-calme);
 }
 
 .article__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.1rem;
-  margin: 1.1rem 0 0;
+  gap: 0.5rem 1.25rem;
+  margin: 1rem 0 0;
   padding: 0;
   list-style: none;
-  font-family: var(--voice);
+  font-family: var(--machine);
   font-size: 0.8125rem;
-  font-weight: 500;
-  font-variation-settings: 'wdth' 92;
-  color: var(--on-cotton-quiet);
+  color: var(--encre-calme);
 }
 
 .article__tags li {
-  padding-left: 0.85rem;
-  border-left: 2px solid var(--saffron-ink);
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--accent);
 }
 
 .article__foot {
-  max-width: var(--measure);
+  max-width: var(--mesure);
   margin-top: clamp(3rem, 7vw, 4.5rem);
-  padding-top: 1.4rem;
-  border-top: 1px solid var(--hair);
-  font-family: var(--voice);
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding-top: 1.25rem;
+  border-top: 2px solid var(--ebene);
+  font-family: var(--machine);
+  font-size: 0.9375rem;
+  font-weight: 700;
 }
 
 .article__foot a {
-  text-decoration-color: var(--hair);
   text-underline-offset: 0.2em;
 }
 
 .article__foot a:hover {
-  color: var(--saffron-ink);
-  text-decoration-color: currentColor;
+  color: var(--accent);
 }
 
 /* --- Prose longue -------------------------------------------------- */
 
 .prose {
-  max-width: var(--measure);
+  max-width: var(--mesure);
 }
 
 .prose > * + * {
@@ -662,26 +1189,22 @@ a {
 .prose h2 {
   margin-top: 2.6em;
   padding-top: 0.9em;
-  border-top: 1px solid var(--hair);
-  font-size: 1.55rem;
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -0.012em;
+  border-top: 1px solid var(--filet);
+  font-size: 1.75rem;
+  line-height: 1.15;
 }
 
 .prose h3 {
   margin-top: 2.1em;
-  font-family: var(--voice);
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: -0.003em;
+  font-weight: 500;
+  font-size: 1.3125rem;
 }
 
 .prose h4 {
   margin-top: 1.9em;
-  font-style: italic;
-  font-size: 1.0625rem;
-  font-weight: 500;
+  font-family: var(--machine);
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 .prose strong {
@@ -689,14 +1212,14 @@ a {
 }
 
 .prose a {
-  text-decoration-color: var(--saffron-ink);
+  text-decoration-color: var(--accent);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
   transition: color 140ms ease;
 }
 
 .prose a:hover {
-  color: var(--saffron-ink);
+  color: var(--accent);
 }
 
 .prose ul,
@@ -717,20 +1240,19 @@ a {
 .prose ul li::before {
   content: '';
   position: absolute;
-  left: -1.5rem;
   top: 0.72em;
+  left: -1.5rem;
   width: 0.6rem;
-  height: 1px;
-  background: var(--saffron-ink);
+  height: 2px;
+  background: var(--accent);
 }
 
 .prose ol {
   list-style: decimal;
 }
 
-.prose ol::marker,
 .prose li::marker {
-  color: var(--on-cotton-quiet);
+  color: var(--encre-calme);
 }
 
 .prose li + li {
@@ -744,11 +1266,11 @@ a {
 
 .prose blockquote {
   margin: 2em 0;
-  padding-left: 1.4rem;
-  border-left: 2px solid var(--saffron-ink);
+  padding-left: 1.25rem;
+  border-left: 3px solid var(--accent);
   font-style: italic;
   font-size: 1.125rem;
-  color: var(--on-cotton-quiet);
+  color: var(--encre-calme);
 }
 
 .prose blockquote p + p {
@@ -767,13 +1289,11 @@ a {
 
 .prose figcaption {
   max-width: 52ch;
-  margin-top: 0.65rem;
-  font-family: var(--voice);
+  margin-top: 0.625rem;
+  font-family: var(--machine);
   font-size: 0.8125rem;
-  font-weight: 500;
-  font-variation-settings: 'wdth' 92;
   line-height: 1.5;
-  color: var(--on-cotton-quiet);
+  color: var(--encre-calme);
 }
 
 .prose img {
@@ -781,27 +1301,32 @@ a {
   height: auto;
 }
 
+/* Un filet de trame, pas une règle : trois teintes cousues. */
 .prose hr {
-  width: 4.5rem;
-  height: 1px;
+  height: 6px;
   margin: 2.8em 0;
   border: 0;
-  background: var(--saffron-ink);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--ebene) 0 26px,
+    var(--ocre) 26px 30px,
+    var(--laterite) 30px 52px,
+    var(--kaolin) 52px 54px
+  );
 }
 
 .prose code {
   padding: 0.08em 0.32em;
-  background: var(--cotton-fold);
-  font-family: var(--voice);
+  background: var(--filet);
+  font-family: var(--machine);
   font-size: 0.9em;
-  font-weight: 500;
 }
 
 .prose pre {
   padding: 1.2rem 1.35rem;
-  border-left: 2px solid var(--saffron);
-  background: var(--indigo-deep);
-  color: var(--on-indigo);
+  border-left: 3px solid var(--ocre);
+  background: var(--ebene);
+  color: var(--kaolin);
   font-size: 0.8438rem;
   line-height: 1.6;
   overflow-x: auto;
@@ -810,25 +1335,25 @@ a {
 .prose pre code {
   padding: 0;
   background: none;
-  font-weight: 400;
   color: inherit;
 }
 
-/* Coloration syntaxique (Prism) : deux tons d'un seul pigment et des gris.
-   Un bloc de code n'est pas un arc-en-ciel, c'est du texte un peu structure. */
+/* Coloration syntaxique (Prism) : les teintes de la planche, sur ébène.
+   Un bloc de code n'est pas un arc-en-ciel, c'est du texte un peu
+   structuré. Chaque couple tient 4,5:1 sur ébène — cf. docs/design.md. */
 
 .prose .token.comment,
 .prose .token.prolog,
 .prose .token.doctype,
 .prose .token.cdata {
-  color: #8e9aa4;
+  color: var(--sourdine);
   font-style: italic;
 }
 
 .prose .token.punctuation,
 .prose .token.operator,
 .prose .token.entity {
-  color: #a9b4bd;
+  color: var(--sur-ebene);
 }
 
 .prose .token.keyword,
@@ -839,7 +1364,7 @@ a {
 .prose .token.boolean,
 .prose .token.constant,
 .prose .token.symbol {
-  color: var(--saffron);
+  color: var(--ocre);
 }
 
 .prose .token.string,
@@ -848,7 +1373,7 @@ a {
 .prose .token.regex,
 .prose .token.url,
 .prose .token.number {
-  color: #e8c687;
+  color: var(--paille);
 }
 
 .prose .token.function,
@@ -857,16 +1382,16 @@ a {
 .prose .token.property,
 .prose .token.variable,
 .prose .token.builtin {
-  color: var(--on-indigo);
-  font-weight: 500;
+  color: var(--kaolin);
+  font-weight: 600;
 }
 
 .prose .token.inserted {
-  color: #9ec9ae;
+  color: var(--pousse);
 }
 
 .prose .token.deleted {
-  color: #e59a86;
+  color: var(--abricot);
 }
 
 .prose table {
@@ -878,68 +1403,90 @@ a {
 .prose th,
 .prose td {
   padding: 0.6rem 0.9rem 0.6rem 0;
-  border-bottom: 1px solid var(--hair);
+  border-bottom: 1px solid var(--filet);
   text-align: left;
   vertical-align: top;
 }
 
 .prose th {
-  font-family: var(--voice);
+  font-family: var(--machine);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* --- Pied ---------------------------------------------------------- */
+/* --- Colophon ------------------------------------------------------ */
 
 .colophon {
+  border-top: 2px solid var(--ebene);
+}
+
+.colophon__dire {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.85rem 1.75rem;
-  padding: 2.25rem var(--gutter) 3rem;
-  border-top: 1px solid var(--hair);
-  font-family: var(--voice);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  font-variation-settings: 'wdth' 92;
-  color: var(--on-cotton-quiet);
+  justify-content: space-between;
+  gap: 1.25rem 2.5rem;
+  padding-block: 2rem 2.5rem;
+  font-family: var(--machine);
+  font-size: 0.875rem;
+  color: var(--encre-calme);
 }
 
 .colophon a {
-  text-decoration-color: var(--hair);
   text-underline-offset: 0.2em;
-  transition: color 140ms ease, text-decoration-color 140ms ease;
 }
 
 .colophon a:hover {
-  color: var(--saffron-ink);
-  text-decoration-color: currentColor;
+  color: var(--accent);
+}
+
+/* Motif : la bande de pied. Cinq bandes vert et jaune, le canton
+   latérite et son étoile — le drapeau du Togo, en lisière. */
+.bande-pied {
+  display: flex;
+  height: 1.875rem;
+}
+
+.bande-pied__canton {
+  display: flex;
+  flex: 0 0 1.875rem;
+  align-items: center;
+  justify-content: center;
+  background: var(--laterite);
+  color: var(--kaolin);
+}
+
+.bande-pied__bandes {
+  flex: 1 1 auto;
+  background: repeating-linear-gradient(180deg, var(--vert) 0 6px, var(--jaune) 6px 12px);
 }
 
 /* --- Entrée en scène : une seule orchestration, au chargement ------
-   Le hero se met en place comme un lé qu'on laisse retomber. Rien
-   d'autre sur le site ne bouge sans qu'on l'ait demandé. */
+   L'ouverture se pose comme un lé qu'on laisse retomber. Rien d'autre
+   sur le site ne bouge sans qu'on l'ait demandé — pas de révélation
+   au défilement. */
 
 @media (prefers-reduced-motion: no-preference) {
-  .open__text,
-  .open__lead,
-  .weave__said,
-  .strip {
-    animation: settle 700ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  .salut,
+  .declaration,
+  .fil,
+  .chapeau,
+  .aparte {
+    animation: poser 700ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
   }
 
-  .open__lead { animation-delay: 110ms; }
-  .weave__said { animation-delay: 200ms; }
-  .strip:nth-child(1) { animation-delay: 290ms; }
-  .strip:nth-child(2) { animation-delay: 370ms; }
-  .strip:nth-child(3) { animation-delay: 450ms; }
+  .declaration { animation-delay: 80ms; }
+  .fil { animation-delay: 190ms; }
+  .chapeau { animation-delay: 260ms; }
+  .aparte { animation-delay: 340ms; }
 }
 
-@keyframes settle {
+@keyframes poser {
   from {
     opacity: 0;
     transform: translateY(1.1rem);
   }
+
   to {
     opacity: 1;
     transform: none;
