@@ -1,0 +1,101 @@
+name: Release
+
+# Publication de l'image, déclenchée par un tag `v*` et rien d'autre : aucune
+# pull request ne peut publier, et il n'y a pas de `pull_request_target`.
+# Le tag git `v0.1.0` produit l'image `ghcr.io/lawp09/website:0.1.0`, forme
+# attendue par le `deployment.yaml` du dépôt `homelab`.
+
+on:
+  push:
+    tags: ['v*']
+
+# Rien au niveau du workflow : chaque job déclare ce dont il a besoin, et un
+# job ajouté plus tard sans `permissions` n'héritera d'aucun droit.
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Typage, build et garde-fous
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Installer Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: package.json
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      # Le Dockerfile construit le site, mais ne lance pas les garde-fous :
+      # sans ce job, un tag coupé hors de `main` pourrait publier une image
+      # qui viole la CSP `default-src 'none'`.
+      - name: Vérifier le typage, le build et les contraintes
+        run: npm run verify
+
+  publish:
+    name: Construire et pousser l'image arm64
+    needs: verify
+    # Runner arm64 natif : les nœuds du cluster sont en arm64, et l'émulation
+    # QEMU rendrait le build Astro très lent. Gratuit sur un dépôt public.
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}
+      DOCKER_BUILDKIT: '1'
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Dériver la version du tag
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version="${TAG#v}"
+          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::Le tag '$TAG' n'est pas un semver 'vX.Y.Z' : rien n'est publié."
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Connexion à GHCR
+        env:
+          # Le GITHUB_TOKEN du run suffit pour GHCR : aucun secret n'est
+          # ajouté au dépôt.
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+        run: printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+      # Pas de docker/build-push-action : le build est natif et mono-plateforme,
+      # donc `docker build` suffit et retire une action tierce de la chaîne.
+      # shortcut: pas de cache de couches entre runs, à ajouter si le build
+      # dépasse quelques minutes.
+      - name: Construire l'image
+        run: |
+          docker build \
+            --platform linux/arm64 \
+            --tag "$IMAGE:$VERSION" \
+            --label org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }} \
+            --label org.opencontainers.image.version="$VERSION" \
+            --label org.opencontainers.image.revision=${{ github.sha }} \
+            .
+
+      # Un seul tag, immuable, sans `latest` : Renovate n'a ainsi que des
+      # versions semver à comparer pour bumper le manifeste côté `homelab`.
+      - name: Pousser l'image
+        run: docker push "$IMAGE:$VERSION"
+
+      - name: Résumé
+        run: |
+          echo "Image publiée : \`$IMAGE:$VERSION\`" >> "$GITHUB_STEP_SUMMARY"

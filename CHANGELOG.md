@@ -23,6 +23,10 @@ adhère au [versionnage sémantique](https://semver.org/lang/fr/).
   garde-fous qui font échouer le build sur un script, un style inline ou une ressource
   tierce dans la sortie. En `contents: read` et actions épinglées par SHA puisque le dépôt
   est public — voir README, « Les garde-fous » et « Intégration continue ».
+- Publication de l'image sur `ghcr.io/lawp09/website` déclenchée par un tag `v*` et rien
+  d'autre : le tag `v0.1.0` produit l'image `0.1.0`, seul tag poussé, pour que Renovate
+  n'ait que des versions à comparer. Build arm64 natif, `packages: write` accordé au seul
+  job qui pousse, aucun secret ajouté — voir README, « Publier ».
 - Direction visuelle « Trame » : indigo teint, coton brut, un seul fil safran et un sceau
   d'auteur, pour un site qui se lit comme écrit à la main — voir `docs/design.md`.
 - Mise en page des textes longs (listes, citations, légendes, tableaux, code) et états de
