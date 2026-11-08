@@ -208,6 +208,10 @@ a:hover {
   padding: 0;
 }
 
+.entries--spaced {
+  margin-top: 3rem;
+}
+
 .entry {
   padding-block: 1.75rem;
   border-top: 1px solid var(--deep-rule);

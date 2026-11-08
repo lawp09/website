@@ -1,0 +1,46 @@
+name: CI
+
+# Validation du code uniquement. La construction et la publication de l'image
+# vivent dans le dépôt privé `homelab` : ce dépôt est public, il ne porte donc
+# aucun secret, aucune permission de registre et aucun `pull_request_target`.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typage, build et garde-fous
+    runs-on: ubuntu-latest
+    steps:
+      # Actions épinglées par SHA : un tag mutable peut être repointé sur
+      # du code arbitraire par un mainteneur compromis.
+      - name: Récupérer le dépôt
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Installer Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: package.json
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Vérifier le typage
+        run: npm run check:types
+
+      - name: Construire le site
+        run: npm run build
+
+      - name: Vérifier les contraintes de conception
+        run: npm run check:constraints
