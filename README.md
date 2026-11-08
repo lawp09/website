@@ -103,6 +103,10 @@ Le système visuel — pigments, surfaces, caractères, motifs, mouvement — es
 sont pas des sous-ensembles Google standards : la même page dit pourquoi et comment les
 refaire.
 
+Les ressources graphiques se regravent depuis le dépôt, sans dépendance ajoutée —
+`scripts/make-favicon.mjs` pour le `.ico`, `scripts/make-og.mjs` pour l'image de partage.
+La même page dit ce que chacun trace.
+
 ## Intégration continue
 
 `.github/workflows/ci.yml` tourne sur push et sur pull request vers `main` : `npm ci`,

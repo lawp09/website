@@ -206,21 +206,57 @@ seize carreaux ne se distinguent pas à 16 px. L'icône d'application en dérive
 node -e "require('sharp')('public/favicon.svg',{density:600}).resize(180,180).png().toFile('public/apple-touch-icon.png')"
 ```
 
-**`public/favicon.ico` et `public/og.png` portent encore la direction « Trame »** (indigo,
-vermillon, sceau `PL`). Ni l'un ni l'autre n'a de chemin de régénération automatisable
-ici : l'`.ico` n'est produit par aucune dépendance du projet, et l'`og.png` demande de
-rendre du texte dans les polices du site. À reprendre à la main.
+### Le `.ico`
+
+`public/favicon.ico` est le repli de `<link rel="alternate icon">`, pour les clients qui
+ne lisent pas le SVG. Aucune dépendance du projet n'écrit ce format — `sharp` ne sait ni
+le lire ni l'écrire — et en ajouter une pour trois rectangles n'en vaut pas le prix.
+`scripts/make-favicon.mjs` le grave donc sans dépendance, en 16, 32 et 48 :
+
+```sh
+node scripts/make-favicon.mjs
+```
+
+Le script reprend la géométrie de `public/favicon.svg`, qui fait foi, dans le même repère
+100×100. Deux choix à ne pas défaire sans raison :
+
+- **Les bords sont arrêtés sur la grille de pixels, taille par taille, au lieu d'être
+  lissés.** À 16 px le cadre mesure 0,96 px de large : lissé, il se dilue en un halo et le
+  damier perd ses arêtes. C'est la même raison qui réduit le favicon à quatre carreaux
+  quand l'en-tête en affiche seize.
+- **Les images sont des bitmaps DIB 32 bits, pas des PNG embarqués.** Le PNG dans un `.ico`
+  tiendrait en 1 Ko au lieu de 15, mais le `.ico` n'existe précisément que pour les clients
+  anciens — l'économie se paierait sur ceux à qui le fichier est destiné.
+
+Après coup, `file public/favicon.ico` doit annoncer trois icônes.
 
 ## L'image de partage
 
-`public/og.png` est dessinée à la main, pas au build : la rasteriser demanderait de rendre
-du texte dans les polices du site, ce qu'aucune bibliothèque Node ne fait proprement sans
-les installer sur le système. Elle a été tracée dans un canvas de navigateur, qui a les
-polices déjà chargées, puis exportée en PNG 1200×630.
+`public/og.png` (1200×630) porte du texte dans les polices du site. La rasteriser depuis
+Node demanderait de les installer sur le système, ce qu'on ne fait pas pour une image qui
+change deux fois par an. On passe donc par un navigateur, qui sait composer du texte :
 
-Pour la refaire aux teintes Kente, le plus simple est de reprendre ce chemin : une page
-locale qui déclare les `@font-face` du site, trace la carte dans un `<canvas>`, et exporte
-via `toDataURL('image/png')`.
+```sh
+node scripts/make-og.mjs   # puis ouvrir http://localhost:4330/
+```
+
+`scripts/make-og.mjs` sert `scripts/og-card.html` et les woff2 de `public/fonts/`. La page
+attend `document.fonts.ready`, trace la carte dans un `<canvas>`, la renvoie en POST, et le
+serveur écrit `public/og.png` puis s'arrête — rien à copier à la main. Le canvas reste
+affiché : ce qu'on voit est le fichier écrit.
+
+La carte reprend l'ouverture : fond kaolin, bande tissée en tête et en pied (le motif de
+`.lisiere--tete`, grain compris), le damier à seize carreaux de l'en-tête, la déclaration
+en Zilla Slab 700 avec `ni moi.` en latérite — en couleur et non en italique, comme
+`.declaration em` —, les trois segments de fil, et le chapeau en Literata.
+
+Le rythme vertical est posé en constantes de lignes de base plutôt que cumulé au fil du
+tracé : la dernière ligne du chapeau passe à 36 px de la bande de pied, et une dérive de
+quelques pixels l'y ferait entrer. Changer le texte demande donc de regarder le canvas, pas
+seulement de relancer.
+
+Les teintes sont écrites en dur dans la page — c'est le seul endroit du dépôt où c'est
+permis, puisqu'un canvas ne lit pas `:root`. Elles doivent suivre les jetons à la main.
 
 ## Le mouvement
 

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Carte de partage — Philippe Lawson</title>
+    <style>
+      /* Les polices du site, servies par make-og.mjs depuis public/fonts/.
+         Les tracer ici plutôt qu'avec une bibliothèque Node est tout l'objet
+         de ce détour : le navigateur sait composer du texte, pas elles. */
+      @font-face {
+        font-family: 'Zilla Slab';
+        src: url('/fonts/zilla-slab-bold.woff2') format('woff2');
+        font-weight: 700;
+      }
+      @font-face {
+        font-family: 'Literata';
+        src: url('/fonts/literata.woff2') format('woff2');
+        font-weight: 400 600;
+      }
+      @font-face {
+        font-family: 'Courier Prime';
+        src: url('/fonts/courier-prime.woff2') format('woff2');
+        font-weight: 400;
+      }
+
+      body {
+        margin: 0;
+        padding: 2rem;
+        background: #2b2b2b;
+        color: #f1e7d3;
+        font-family: 'Courier Prime', monospace;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        max-width: 1200px;
+        height: auto;
+      }
+      p {
+        max-width: 1200px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="carte" width="1200" height="630"></canvas>
+    <p id="etat">Chargement des polices…</p>
+
+    <script type="module">
+      const KAOLIN = '#f1e7d3';
+      const EBENE = '#201812';
+      const LATERITE = '#9e3f24';
+      const OCRE = '#c98b22';
+      const VERT = '#1f5a3c';
+      const ENCRE_DOUCE = '#5e5246';
+
+      const W = 1200;
+      const H = 630;
+      const MARGE = 96;
+
+      /* Le rythme vertical, en lignes de base. Il est posé ici plutôt que
+         cumulé au fil du tracé : la dernière ligne du chapeau passe à 36 px
+         de la bande de pied, et une dérive de quelques pixels l'y ferait
+         entrer. */
+      const BANDE_TETE = 14;
+      const BANDE_PIED = 28;
+      const MARQUE_Y = 74;
+      const MARQUE_COTE = 64;
+      const TITRE_Y = 272;
+      const TITRE_PAS = 80;
+      const FIL_Y = 464;
+      const CHAPEAU_Y = 524;
+      const CHAPEAU_PAS = 34;
+      /* Plus étroit que la colonne de texte : à pleine largeur, le chapeau
+         casse sur son dernier mot et laisse « production. » seule. */
+      const CHAPEAU_LARGEUR = 700;
+
+      const canvas = document.getElementById('carte');
+      const etat = document.getElementById('etat');
+      const ctx = canvas.getContext('2d');
+
+      /**
+       * Le grain du tissage : la trame horizontale de `--grain`, un filet
+       * d'ébène à 14 % tous les trois pixels. Toute bande la porte.
+       */
+      function grain(y, hauteur) {
+        ctx.fillStyle = 'rgba(32, 24, 18, 0.14)';
+        for (let ligne = y; ligne < y + hauteur; ligne += 3) {
+          ctx.fillRect(0, ligne, W, 1);
+        }
+      }
+
+      /**
+       * Une bande tissée, reprise de `.lisiere--tete` : un motif de 76 px
+       * répété sur toute la largeur, puis le grain par-dessus.
+       */
+      function bande(y, hauteur) {
+        const motif = [
+          [0, 26, EBENE],
+          [26, 30, OCRE],
+          [30, 52, LATERITE],
+          [52, 54, KAOLIN],
+          [54, 74, VERT],
+          [74, 76, KAOLIN],
+        ];
+
+        for (let x = 0; x < W; x += 76) {
+          for (const [de, a, teinte] of motif) {
+            ctx.fillStyle = teinte;
+            ctx.fillRect(x + de, y, a - de, hauteur);
+          }
+        }
+
+        grain(y, hauteur);
+      }
+
+      /**
+       * Le damier-monogramme de l'en-tête : quatre quartiers tuilés en
+       * `background-size: 50%`, donc seize carreaux, et un filet décalé.
+       */
+      function monogramme(x, y, cote) {
+        const quartiers = [EBENE, LATERITE, OCRE, EBENE];
+        const carreau = cote / 4;
+
+        for (let ligne = 0; ligne < 4; ligne += 1) {
+          for (const colonne of [0, 1, 2, 3]) {
+            ctx.fillStyle = quartiers[(ligne % 2) * 2 + (colonne % 2)];
+            ctx.fillRect(x + colonne * carreau, y + ligne * carreau, carreau, carreau);
+          }
+        }
+
+        ctx.strokeStyle = EBENE;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x - 4, y - 4, cote + 8, cote + 8);
+      }
+
+      /** Les trois segments de fil, inégaux — la trame reprise à la main. */
+      function fil(x, y) {
+        const segments = [
+          [64, EBENE],
+          [16, OCRE],
+          [35, LATERITE],
+        ];
+        let courant = x;
+        for (const [largeur, teinte] of segments) {
+          ctx.fillStyle = teinte;
+          ctx.fillRect(courant, y, largeur, 8);
+          courant += largeur + 6;
+        }
+      }
+
+      /** Découpe `texte` en lignes qui tiennent dans `largeur`. */
+      function lignes(texte, largeur) {
+        const sortie = [];
+        let ligne = '';
+        for (const mot of texte.split(' ')) {
+          const essai = ligne ? `${ligne} ${mot}` : mot;
+          if (ctx.measureText(essai).width > largeur && ligne) {
+            sortie.push(ligne);
+            ligne = mot;
+          } else {
+            ligne = essai;
+          }
+        }
+        if (ligne) sortie.push(ligne);
+        return sortie;
+      }
+
+      function tracer() {
+        ctx.fillStyle = KAOLIN;
+        ctx.fillRect(0, 0, W, H);
+
+        bande(0, BANDE_TETE);
+        bande(H - BANDE_PIED, BANDE_PIED);
+
+        // --- La marque et le nom ---
+        monogramme(MARGE, MARQUE_Y, MARQUE_COTE);
+
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = EBENE;
+        ctx.font = '700 30px "Zilla Slab", Georgia, serif';
+        ctx.fillText('Philippe Boévi Lawson', MARGE + 92, MARQUE_Y + 34);
+
+        ctx.fillStyle = ENCRE_DOUCE;
+        ctx.font = '400 19px "Courier Prime", monospace';
+        ctx.fillText('Strasbourg · Togo · Montréal', MARGE + 92, MARQUE_Y + 62);
+
+        // --- La déclaration ---
+        // « ni moi. » passe en latérite, comme `.declaration em` sur le site :
+        // une mise en relief qui se dit en couleur, pas en italique.
+        ctx.font = '700 78px "Zilla Slab", Georgia, serif';
+        const declaration = [
+          [['Rien n’est de confiance', EBENE]],
+          [['par défaut. Ni le réseau,', EBENE]],
+          [
+            ['ni le client, ', EBENE],
+            ['ni moi.', LATERITE],
+          ],
+        ];
+
+        declaration.forEach((ligne, index) => {
+          let x = MARGE;
+          for (const [texte, teinte] of ligne) {
+            ctx.fillStyle = teinte;
+            ctx.fillText(texte, x, TITRE_Y + index * TITRE_PAS);
+            x += ctx.measureText(texte).width;
+          }
+        });
+
+        fil(MARGE, FIL_Y);
+
+        // --- Le chapeau ---
+        ctx.fillStyle = ENCRE_DOUCE;
+        ctx.font = '400 24px "Literata", Georgia, serif';
+        lignes(
+          'Architecture de systèmes distribués, sécurité par défaut, et ce qu’on apprend en production.',
+          CHAPEAU_LARGEUR,
+        ).forEach((ligne, index) => {
+          ctx.fillText(ligne, MARGE, CHAPEAU_Y + index * CHAPEAU_PAS);
+        });
+      }
+
+      await document.fonts.load('700 78px "Zilla Slab"');
+      await document.fonts.load('400 24px "Literata"');
+      await document.fonts.load('400 19px "Courier Prime"');
+      await document.fonts.ready;
+
+      tracer();
+
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+      const reponse = await fetch('/og.png', { method: 'POST', body: blob });
+      etat.textContent = reponse.ok
+        ? `public/og.png écrit — ${blob.size} octets. Le serveur s’est arrêté.`
+        : `Échec de l’écriture : ${reponse.status}`;
+    </script>
+  </body>
+</html>
