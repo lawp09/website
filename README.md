@@ -31,6 +31,9 @@ tags: ["architecture"]
 Un texte en `draft: true` est visible en développement et exclu du build de production.
 Le nom du fichier donne l'URL : `zero-port-ouvert.md` devient `/ecrits/zero-port-ouvert/`.
 
+Les textes publiés alimentent le flux RSS servi sur `/rss.xml`, généré par
+`src/pages/rss.xml.ts`. Le flux porte le résumé, pas le texte complet.
+
 ## Contraintes à ne pas casser
 
 **Pas de JavaScript côté client.** Le site est servi sous une CSP `default-src 'none'`,
@@ -40,8 +43,18 @@ Ajouter un îlot interactif oblige à ouvrir `script-src` dans le middleware Tra
 **Pas de ressource tierce.** Les polices sont servies depuis `public/fonts/` : aucune
 requête sortante, donc aucune adresse IP de visiteur transmise ailleurs.
 
+**Pas de coloration syntaxique à styles inline.** `astro.config.mjs` fixe
+`syntaxHighlight: 'prism'`. Shiki, le défaut d'Astro, pose les couleurs en `style=` sur
+`<pre>` et sur chaque `<span>`, ce qui obligerait la CSP à accepter `'unsafe-inline'`.
+Prism sort des classes, colorées dans `global.css`.
+
 **Pas d'inventaire d'infrastructure.** Les textes parlent de mécanismes et d'arbitrages,
 pas de versions ni de topologie — une liste d'infrastructure est une carte.
+
+## Dessiner
+
+Le système visuel — pigments, caractères, seuils, mouvement — est décrit dans
+`docs/design.md`, à lire avant de modifier `src/styles/global.css`.
 
 ## Publier
 

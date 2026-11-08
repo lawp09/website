@@ -1,7 +1,15 @@
-/* ---------------------------------------------------------------
-   Polices servies depuis le site : aucune requête tierce au runtime,
-   donc aucune adresse IP de visiteur transmise à un tiers.
-   --------------------------------------------------------------- */
+/* ===================================================================
+   Trame — le site est une étoffe.
+
+   Deux traditions de tissage arrivent à la même structure : la bande
+   étroite ewe, cousue bord à bord et volontairement hors phase, et le
+   fukinsei japonais, qui refuse la symétrie. L'indigo est le pigment
+   que les deux partagent. Teint là où le site affirme, coton brut là
+   où il se lit. Le vermillon ne sert qu'une fois : le sceau.
+   =================================================================== */
+
+/* Polices servies depuis le site : aucune requête tierce au runtime,
+   donc aucune adresse IP de visiteur transmise à un tiers. */
 @font-face {
   font-family: 'Archivo';
   src: url('/fonts/archivo.woff2') format('woff2');
@@ -26,24 +34,28 @@
 }
 
 :root {
-  --paper: #f1f2ee;
-  --ink: #16202a;
-  --muted: #5b6b72;
-  --rule: #ccd2cf;
+  --indigo: #16283c;
+  --indigo-deep: #0d1a28;
+  --cotton: #eae8e1;
+  --cotton-fold: #dedbd2;
+  --hair: #cfccc1;
 
-  --deep: #0d161e;
-  --deep-ink: #dde4e1;
-  --deep-muted: #8d9d9e;
-  --deep-rule: #263440;
+  --on-indigo: #dedcd3;
+  --on-indigo-quiet: #95a1ac;
+  --on-cotton: #16283c;
+  --on-cotton-quiet: #5a6670;
 
-  --signal: #2e6b58;
-  --signal-deep: #7bbfa4;
+  --saffron: #d4a23c;
+  --saffron-ink: #7a5410;
+  --shu: #b3351f;
 
+  /* Archivo porte la structure, Newsreader porte la voix. */
   --voice: 'Archivo', system-ui, sans-serif;
   --read: 'Newsreader', Georgia, serif;
 
-  --gutter: clamp(1.5rem, 5vw, 5rem);
-  --measure: 64ch;
+  --rail: 4.25rem;
+  --gutter: clamp(1.5rem, 5vw, 4.5rem);
+  --measure: 66ch;
 }
 
 *,
@@ -58,219 +70,521 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--cotton);
+  color: var(--on-cotton);
   font-family: var(--read);
   font-size: 1.0625rem;
-  line-height: 1.65;
+  line-height: 1.7;
   font-synthesis: none;
+  overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
 }
 
 h1,
 h2,
-h3 {
-  font-family: var(--voice);
-  font-weight: 600;
+h3,
+h4 {
+  margin: 0;
+  font-weight: 400;
   line-height: 1.1;
-  letter-spacing: -0.015em;
+}
+
+p {
   margin: 0;
 }
 
 a {
   color: inherit;
-  text-decoration-color: var(--rule);
-  text-underline-offset: 0.2em;
-  text-decoration-thickness: 1px;
-  transition: text-decoration-color 140ms ease, color 140ms ease;
-}
-
-a:hover {
-  color: var(--signal);
-  text-decoration-color: currentColor;
 }
 
 :focus-visible {
-  outline: 2px solid var(--signal);
+  outline: 2px solid var(--saffron-ink);
   outline-offset: 3px;
 }
 
-/* --- Bandes : le changement de fond EST la frontière ------------- */
-
-.band {
-  padding-block: clamp(3.5rem, 9vw, 7rem);
-  padding-inline: var(--gutter);
+.band--field :focus-visible,
+.band--deep :focus-visible,
+.masthead :focus-visible,
+.spine :focus-visible {
+  outline-color: var(--saffron);
 }
 
-.band--deep {
-  background: var(--deep);
-  color: var(--deep-ink);
+/* Le sceau : seule apparition du vermillon sur tout le site. */
+.seal-source {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
-.band--deep a:hover {
-  color: var(--signal-deep);
+.seal {
+  display: block;
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
-.band--deep :focus-visible {
-  outline-color: var(--signal-deep);
+/* --- Le métier : rail de chaîne à gauche, étoffe à droite --------- */
+
+.loom {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 100vh;
 }
 
-.shell {
-  max-width: 68rem;
-  margin-inline: auto;
+@media (min-width: 62rem) {
+  .loom {
+    grid-template-columns: var(--rail) 1fr;
+  }
 }
 
-/* --- En-tête ----------------------------------------------------- */
+/* Le rail porte le nom comme un dos de livre : il reste là quand les
+   bandes défilent, ce qui laisse l'en-tête se réduire à la navigation. */
+.spine {
+  display: none;
+}
+
+@media (min-width: 62rem) {
+  .spine {
+    display: block;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    padding-block: 1.75rem 1.5rem;
+    background: var(--indigo-deep);
+    color: var(--on-indigo);
+  }
+
+  .spine__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+  }
+
+  .spine__name,
+  .spine__place {
+    writing-mode: vertical-rl;
+    font-family: var(--voice);
+    font-weight: 600;
+    font-variation-settings: 'wdth' 85;
+    letter-spacing: 0.055em;
+  }
+
+  .spine__name {
+    font-size: 0.8125rem;
+    text-decoration: none;
+  }
+
+  .spine__name:hover {
+    color: var(--saffron);
+  }
+
+  .spine .seal {
+    margin-block: 1.25rem;
+  }
+
+  .spine__place {
+    margin-top: auto;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    color: var(--on-indigo-quiet);
+  }
+}
+
+/* L'étoffe occupe toute la hauteur : sur une page courte, la dernière
+   bande s'étire au lieu de laisser le pied flotter au milieu. */
+.cloth {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.cloth > main {
+  flex: 1 1 auto;
+}
+
+/* --- En-tête ------------------------------------------------------ */
 
 .masthead {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem 2rem;
+  gap: 0.75rem 1.75rem;
   align-items: baseline;
   justify-content: space-between;
-  padding: 1.75rem var(--gutter) 0;
-  max-width: 68rem;
-  margin-inline: auto;
+  padding: 1.5rem var(--gutter) 0;
+  background: var(--indigo);
 }
 
 .masthead__name {
   font-family: var(--voice);
+  font-size: 0.875rem;
   font-weight: 600;
-  font-size: 0.95rem;
   font-variation-settings: 'wdth' 112;
+  color: var(--on-indigo);
   text-decoration: none;
+}
+
+@media (min-width: 62rem) {
+  .masthead {
+    justify-content: flex-end;
+  }
+
+  /* Le rail porte déjà le nom : pas de doublon dans l'arbre d'accessibilité. */
+  .masthead__name {
+    display: none;
+  }
 }
 
 .masthead__nav {
   display: flex;
   gap: 1.5rem;
   font-family: var(--voice);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 500;
-}
-
-/* --- Déclaration d'ouverture ------------------------------------- */
-
-.statement {
-  padding-block: clamp(4rem, 14vh, 9rem) clamp(3rem, 8vw, 5rem);
-}
-
-.statement__text {
-  font-size: clamp(2.3rem, 7.4vw, 5.1rem);
   font-variation-settings: 'wdth' 112;
-  font-weight: 620;
-  line-height: 0.99;
-  letter-spacing: -0.028em;
-  max-width: 18ch;
 }
 
-.statement__line {
+.masthead__nav a {
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid transparent;
+  color: var(--on-indigo);
+  text-decoration: none;
+  transition: color 140ms ease, border-color 140ms ease;
+}
+
+.masthead__nav a:hover,
+.masthead__nav a[aria-current='page'] {
+  color: var(--saffron);
+  border-bottom-color: var(--saffron);
+}
+
+/* --- Bandes : le changement de fond EST la frontière -------------- */
+
+.band {
+  padding: clamp(3rem, 7vw, 5.5rem) var(--gutter);
+}
+
+.band--field {
+  background: var(--indigo);
+  color: var(--on-indigo);
+}
+
+.band--deep {
+  background: var(--indigo-deep);
+  color: var(--on-indigo);
+}
+
+.shell {
+  max-width: 64rem;
+}
+
+/* --- Le seuil : bandes étroites cousues bord à bord, hors phase ---
+   Chaque segment décale le même motif, comme des lés tissés séparément
+   puis assemblés. L'alignement raté est le savoir-faire, pas un défaut. */
+
+.seuil {
+  display: flex;
+  height: clamp(1.75rem, 3.4vw, 2.5rem);
+  overflow: hidden;
+}
+
+.seuil span {
   display: block;
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.24) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(
+      90deg,
+      var(--indigo) 0 13px,
+      var(--indigo-deep) 13px 19px,
+      var(--indigo) 19px 24px,
+      var(--saffron) 24px 26px,
+      var(--indigo-deep) 26px 41px,
+      var(--indigo) 41px 47px,
+      var(--indigo-deep) 47px 50px,
+      var(--indigo) 50px 71px,
+      var(--saffron) 71px 72px,
+      var(--indigo-deep) 72px 89px,
+      var(--indigo) 89px 97px
+    );
 }
 
-.statement__rule {
-  width: 4.5rem;
-  height: 1px;
-  background: var(--ink);
-  border: 0;
-  margin: clamp(2rem, 5vw, 3rem) 0 1.5rem;
+.seuil span:nth-child(1) { flex: 1.1;  background-position-x: 0, 0; }
+.seuil span:nth-child(2) { flex: 0.78; background-position-x: 0, 31px; }
+.seuil span:nth-child(3) { flex: 1.3;  background-position-x: 0, 64px; }
+.seuil span:nth-child(4) { flex: 0.66; background-position-x: 0, 12px; }
+.seuil span:nth-child(5) { flex: 1.02; background-position-x: 0, 47px; }
+
+/* --- Ouverture ---------------------------------------------------- */
+
+.open {
+  padding-top: clamp(3rem, 10vh, 6rem);
 }
 
-.statement__gloss {
-  max-width: 46ch;
+.open__text {
+  max-width: 21ch;
+  font-size: clamp(2.45rem, 6.2vw, 4.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.021em;
+}
+
+.open__text em {
+  font-style: italic;
+  font-weight: 300;
+}
+
+.open__lead {
+  max-width: 48ch;
+  margin-top: clamp(1.75rem, 4vw, 2.5rem);
   font-size: 1.1875rem;
-  color: var(--muted);
-  margin: 0;
+  line-height: 1.65;
+  color: var(--on-indigo-quiet);
 }
 
-.statement__gloss strong {
-  color: var(--ink);
-  font-weight: 600;
+.open__lead strong {
+  font-weight: 500;
+  color: var(--on-indigo);
 }
 
-/* --- Liste d'écrits ---------------------------------------------- */
-
-.section-title {
-  font-size: 0.95rem;
-  font-variation-settings: 'wdth' 112;
-  font-weight: 600;
-  color: var(--deep-muted);
-  margin-bottom: 2.5rem;
+.open__lead a {
+  text-decoration-color: var(--saffron);
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
 }
 
-.band:not(.band--deep) .section-title {
-  color: var(--muted);
+.open__lead a:hover {
+  color: var(--saffron);
 }
 
-.entries {
+/* --- Le parcours, tissé ------------------------------------------- */
+
+.weave {
+  margin-top: clamp(3rem, 7vw, 5rem);
+}
+
+.weave__said {
+  max-width: 44ch;
+  font-style: italic;
+  color: var(--on-indigo-quiet);
+}
+
+.strips {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 2rem;
+  margin: 2.5rem 0 0;
+  padding: 0;
   list-style: none;
+}
+
+/* Largeurs inégales et départs décalés : trois lés tissés à part. */
+@media (min-width: 48rem) {
+  .strips {
+    grid-template-columns: 1.08fr 0.92fr 1.24fr;
+    column-gap: 2.25rem;
+    row-gap: 0;
+  }
+
+  .strip:nth-child(2) { margin-top: 2.75rem; }
+  .strip:nth-child(3) { margin-top: 5.5rem; }
+}
+
+.strip {
+  padding-top: 1.1rem;
+  border-top: 2px solid var(--saffron);
+}
+
+.strip__who {
+  display: block;
+  font-family: var(--voice);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.strip__when {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: var(--voice);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-variation-settings: 'wdth' 92;
+  letter-spacing: 0.045em;
+  color: var(--on-indigo-quiet);
+}
+
+.strip__stake {
+  margin-top: 0.6rem;
+  font-size: 0.9688rem;
+  line-height: 1.6;
+  color: var(--on-indigo-quiet);
+}
+
+/* --- Titres de section : une phrase, pas une étiquette ------------ */
+
+.lede {
+  max-width: 30ch;
+  font-size: clamp(1.5rem, 3.1vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.lede + .pieces,
+.lede + .kit {
+  margin-top: 2.75rem;
+}
+
+/* --- Liste d'écrits ----------------------------------------------- */
+
+.pieces {
+  max-width: 52rem;
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
-.entry {
-  padding-block: 1.75rem;
-  border-top: 1px solid var(--deep-rule);
+.piece {
+  border-top: 1px solid var(--hair);
 }
 
-.band:not(.band--deep) .entry {
-  border-top-color: var(--rule);
+.piece:last-child {
+  border-bottom: 1px solid var(--hair);
 }
 
-.entry:last-child {
-  border-bottom: 1px solid var(--deep-rule);
-}
-
-.band:not(.band--deep) .entry:last-child {
-  border-bottom-color: var(--rule);
-}
-
-.entry__title {
-  font-family: var(--read);
-  font-size: clamp(1.35rem, 2.6vw, 1.7rem);
-  font-weight: 450;
-  letter-spacing: -0.005em;
-  line-height: 1.25;
-  margin: 0 0 0.4rem;
-}
-
-.entry__title a {
+.piece__link {
+  display: block;
+  position: relative;
+  margin-inline: -1.25rem;
+  padding: 1.5rem 1.25rem 1.6rem;
   text-decoration: none;
+  transition: background-color 160ms ease;
 }
 
-.entry__title a:hover {
+/* Le fil de trame apparaît le long de la bande au survol. */
+.piece__link::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 3px;
+  background: var(--saffron-ink);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.piece__link:hover,
+.piece__link:focus-visible {
+  background: var(--cotton-fold);
+}
+
+.piece__link:hover::before,
+.piece__link:focus-visible::before {
+  transform: scaleY(1);
+}
+
+.piece__link:focus-visible {
+  outline: 2px solid var(--saffron-ink);
+  outline-offset: -2px;
+}
+
+.piece__title {
+  margin-bottom: 0.35rem;
+  font-size: clamp(1.3rem, 2.5vw, 1.6rem);
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+}
+
+.piece__link:hover .piece__title {
   text-decoration: underline;
+  text-decoration-color: var(--saffron-ink);
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.18em;
+  text-underline-offset: 0.16em;
 }
 
-.entry__blurb {
-  margin: 0 0 0.6rem;
+.piece__blurb {
   max-width: var(--measure);
-  color: var(--deep-muted);
+  margin-bottom: 0.7rem;
+  color: var(--on-cotton-quiet);
 }
 
-.band:not(.band--deep) .entry__blurb {
-  color: var(--muted);
-}
-
-.entry__date {
+.piece__when {
   font-family: var(--voice);
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: var(--deep-muted);
+  font-variation-settings: 'wdth' 92;
+  letter-spacing: 0.045em;
+  color: var(--on-cotton-quiet);
 }
 
-.band:not(.band--deep) .entry__date {
-  color: var(--muted);
-}
-
-.entry__draft {
+.piece__flag {
+  margin-left: 0.7rem;
   font-family: var(--voice);
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: var(--signal);
-  margin-left: 0.75rem;
+  font-variation-settings: 'wdth' 92;
+  color: var(--saffron-ink);
+}
+
+.pieces__none {
+  max-width: var(--measure);
+  margin-top: 1.6rem;
+  color: var(--on-cotton-quiet);
+}
+
+/* --- Outils : sa propre structure, pas celle des écrits ----------- */
+
+.kit__why {
+  max-width: 46ch;
+  margin-top: 1.6rem;
+  font-size: 1.1875rem;
+  line-height: 1.65;
+  color: var(--on-cotton-quiet);
+}
+
+.kit__why + .kit {
+  margin-top: clamp(2.5rem, 6vw, 3.5rem);
+}
+
+.kit {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem 2.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 46rem) {
+  .kit {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.kit__group {
+  padding-top: 1rem;
+  border-top: 1px solid var(--hair);
+}
+
+.kit__what {
+  margin-bottom: 0.65rem;
+  font-family: var(--voice);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.004em;
+}
+
+.kit__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--on-cotton-quiet);
+}
+
+.kit__items li + li {
+  margin-top: 0.3rem;
 }
 
 /* --- Article ------------------------------------------------------ */
@@ -281,110 +595,350 @@ a:hover {
 }
 
 .article__title {
-  font-family: var(--read);
-  font-weight: 450;
   font-size: clamp(2rem, 5vw, 3.1rem);
-  line-height: 1.12;
-  letter-spacing: -0.015em;
-  margin-bottom: 1rem;
+  line-height: 1.1;
+  letter-spacing: -0.018em;
 }
 
 .article__meta {
+  margin-top: 1rem;
   font-family: var(--voice);
   font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--muted);
+  font-variation-settings: 'wdth' 92;
+  letter-spacing: 0.045em;
+  color: var(--on-cotton-quiet);
 }
+
+.article__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.1rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--voice);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-variation-settings: 'wdth' 92;
+  color: var(--on-cotton-quiet);
+}
+
+.article__tags li {
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--saffron-ink);
+}
+
+.article__foot {
+  max-width: var(--measure);
+  margin-top: clamp(3rem, 7vw, 4.5rem);
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--hair);
+  font-family: var(--voice);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.article__foot a {
+  text-decoration-color: var(--hair);
+  text-underline-offset: 0.2em;
+}
+
+.article__foot a:hover {
+  color: var(--saffron-ink);
+  text-decoration-color: currentColor;
+}
+
+/* --- Prose longue -------------------------------------------------- */
 
 .prose {
   max-width: var(--measure);
 }
 
 .prose > * + * {
-  margin-top: 1.4em;
+  margin-top: 1.45em;
 }
 
 .prose h2 {
-  font-family: var(--read);
-  font-weight: 500;
-  font-size: 1.5rem;
-  letter-spacing: -0.01em;
   margin-top: 2.6em;
+  padding-top: 0.9em;
+  border-top: 1px solid var(--hair);
+  font-size: 1.55rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.012em;
+}
+
+.prose h3 {
+  margin-top: 2.1em;
+  font-family: var(--voice);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.003em;
+}
+
+.prose h4 {
+  margin-top: 1.9em;
+  font-style: italic;
+  font-size: 1.0625rem;
+  font-weight: 500;
+}
+
+.prose strong {
+  font-weight: 600;
+}
+
+.prose a {
+  text-decoration-color: var(--saffron-ink);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: color 140ms ease;
+}
+
+.prose a:hover {
+  color: var(--saffron-ink);
+}
+
+.prose ul,
+.prose ol {
+  margin-left: 0;
+  padding-left: 1.5rem;
+}
+
+.prose ul {
+  list-style: none;
+}
+
+.prose ul li {
+  position: relative;
+}
+
+/* Un fil court, pas une pastille : la liste reste de l'étoffe. */
+.prose ul li::before {
+  content: '';
+  position: absolute;
+  left: -1.5rem;
+  top: 0.72em;
+  width: 0.6rem;
+  height: 1px;
+  background: var(--saffron-ink);
+}
+
+.prose ol {
+  list-style: decimal;
+}
+
+.prose ol::marker,
+.prose li::marker {
+  color: var(--on-cotton-quiet);
+}
+
+.prose li + li {
+  margin-top: 0.5em;
+}
+
+.prose li > ul,
+.prose li > ol {
+  margin-top: 0.5em;
 }
 
 .prose blockquote {
-  margin-inline: 0;
-  padding-left: 1.5rem;
-  border-left: 2px solid var(--signal);
+  margin: 2em 0;
+  padding-left: 1.4rem;
+  border-left: 2px solid var(--saffron-ink);
   font-style: italic;
-  color: var(--muted);
+  font-size: 1.125rem;
+  color: var(--on-cotton-quiet);
+}
+
+.prose blockquote p + p {
+  margin-top: 1em;
+}
+
+.prose figure {
+  margin: 2.4em 0;
+}
+
+.prose figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.prose figcaption {
+  max-width: 52ch;
+  margin-top: 0.65rem;
+  font-family: var(--voice);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-variation-settings: 'wdth' 92;
+  line-height: 1.5;
+  color: var(--on-cotton-quiet);
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose hr {
+  width: 4.5rem;
+  height: 1px;
+  margin: 2.8em 0;
+  border: 0;
+  background: var(--saffron-ink);
 }
 
 .prose code {
+  padding: 0.08em 0.32em;
+  background: var(--cotton-fold);
+  font-family: var(--voice);
   font-size: 0.9em;
-  background: #e4e6e1;
-  padding: 0.1em 0.35em;
+  font-weight: 500;
 }
 
 .prose pre {
-  background: var(--deep);
-  color: var(--deep-ink);
-  padding: 1.25rem;
+  padding: 1.2rem 1.35rem;
+  border-left: 2px solid var(--saffron);
+  background: var(--indigo-deep);
+  color: var(--on-indigo);
+  font-size: 0.8438rem;
+  line-height: 1.6;
   overflow-x: auto;
-  font-size: 0.875rem;
 }
 
 .prose pre code {
-  background: none;
   padding: 0;
+  background: none;
+  font-weight: 400;
+  color: inherit;
 }
 
-/* --- Pied --------------------------------------------------------- */
+/* Coloration syntaxique (Prism) : deux tons d'un seul pigment et des gris.
+   Un bloc de code n'est pas un arc-en-ciel, c'est du texte un peu structure. */
+
+.prose .token.comment,
+.prose .token.prolog,
+.prose .token.doctype,
+.prose .token.cdata {
+  color: #8e9aa4;
+  font-style: italic;
+}
+
+.prose .token.punctuation,
+.prose .token.operator,
+.prose .token.entity {
+  color: #a9b4bd;
+}
+
+.prose .token.keyword,
+.prose .token.atrule,
+.prose .token.important,
+.prose .token.tag,
+.prose .token.selector,
+.prose .token.boolean,
+.prose .token.constant,
+.prose .token.symbol {
+  color: var(--saffron);
+}
+
+.prose .token.string,
+.prose .token.char,
+.prose .token.attr-value,
+.prose .token.regex,
+.prose .token.url,
+.prose .token.number {
+  color: #e8c687;
+}
+
+.prose .token.function,
+.prose .token.class-name,
+.prose .token.attr-name,
+.prose .token.property,
+.prose .token.variable,
+.prose .token.builtin {
+  color: var(--on-indigo);
+  font-weight: 500;
+}
+
+.prose .token.inserted {
+  color: #9ec9ae;
+}
+
+.prose .token.deleted {
+  color: #e59a86;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9688rem;
+}
+
+.prose th,
+.prose td {
+  padding: 0.6rem 0.9rem 0.6rem 0;
+  border-bottom: 1px solid var(--hair);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  font-family: var(--voice);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* --- Pied ---------------------------------------------------------- */
 
 .colophon {
-  border-top: 1px solid var(--rule);
-  padding: 2rem var(--gutter) 3rem;
-  max-width: 68rem;
-  margin-inline: auto;
-  font-family: var(--voice);
-  font-size: 0.8125rem;
-  color: var(--muted);
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem 2rem;
-  justify-content: space-between;
+  align-items: center;
+  gap: 0.85rem 1.75rem;
+  padding: 2.25rem var(--gutter) 3rem;
+  border-top: 1px solid var(--hair);
+  font-family: var(--voice);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-variation-settings: 'wdth' 92;
+  color: var(--on-cotton-quiet);
 }
 
-/* --- Entrée en scène : une seule orchestration, au chargement ----- */
+.colophon a {
+  text-decoration-color: var(--hair);
+  text-underline-offset: 0.2em;
+  transition: color 140ms ease, text-decoration-color 140ms ease;
+}
+
+.colophon a:hover {
+  color: var(--saffron-ink);
+  text-decoration-color: currentColor;
+}
+
+/* --- Entrée en scène : une seule orchestration, au chargement ------
+   Le hero se met en place comme un lé qu'on laisse retomber. Rien
+   d'autre sur le site ne bouge sans qu'on l'ait demandé. */
 
 @media (prefers-reduced-motion: no-preference) {
-  .statement__line,
-  .statement__rule,
-  .statement__gloss {
-    animation: rise 620ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  .open__text,
+  .open__lead,
+  .weave__said,
+  .strip {
+    animation: settle 700ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
   }
 
-  .statement__line:nth-child(2) {
-    animation-delay: 90ms;
-  }
-
-  .statement__line:nth-child(3) {
-    animation-delay: 180ms;
-  }
-
-  .statement__rule {
-    animation-delay: 300ms;
-  }
-
-  .statement__gloss {
-    animation-delay: 360ms;
-  }
+  .open__lead { animation-delay: 110ms; }
+  .weave__said { animation-delay: 200ms; }
+  .strip:nth-child(1) { animation-delay: 290ms; }
+  .strip:nth-child(2) { animation-delay: 370ms; }
+  .strip:nth-child(3) { animation-delay: 450ms; }
 }
 
-@keyframes rise {
+@keyframes settle {
   from {
     opacity: 0;
-    transform: translateY(0.5em);
+    transform: translateY(1.1rem);
   }
   to {
     opacity: 1;

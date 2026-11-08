@@ -15,27 +15,34 @@ const fmt = (d: Date) =>
 <Base
   title="Écrits — Philippe Lawson"
   description="Textes sur la conception de systèmes, la sécurité par défaut et le travail avec des agents."
+  section="ecrits"
 >
   <section class="band">
     <div class="shell">
-      <h1 class="section-title">Écrits</h1>
+      <h1 class="lede">Ce que j’écris, je l’ai cassé d’abord.</h1>
 
-      <ul class="entries">
-        {
-          entries.map((e) => (
-            <li class="entry">
-              <h2 class="entry__title">
-                <a href={`/ecrits/${e.id}/`}>{e.data.title}</a>
-                {e.data.draft && <span class="entry__draft">brouillon</span>}
-              </h2>
-              <p class="entry__blurb">{e.data.description}</p>
-              <span class="entry__date">
-                <time datetime={e.data.date.toISOString()}>{fmt(e.data.date)}</time>
-              </span>
-            </li>
-          ))
-        }
-      </ul>
+      {
+        entries.length === 0 ? (
+          <p class="pieces__none">Le premier texte arrive.</p>
+        ) : (
+          <ul class="pieces">
+            {entries.map((e) => (
+              <li class="piece">
+                <a class="piece__link" href={`/ecrits/${e.id}/`}>
+                  <h2 class="piece__title">
+                    {e.data.title}
+                    {e.data.draft && <span class="piece__flag">brouillon</span>}
+                  </h2>
+                  <p class="piece__blurb">{e.data.description}</p>
+                  <span class="piece__when">
+                    <time datetime={e.data.date.toISOString()}>{fmt(e.data.date)}</time>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
     </div>
   </section>
 </Base>

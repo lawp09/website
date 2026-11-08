@@ -1,6 +1,29 @@
 ---
 import Base from '../layouts/Base.astro';
+import Seuil from '../components/Seuil.astro';
 import { getCollection } from 'astro:content';
+
+// Trois lés tissés séparément. L'ordre est chronologique, les largeurs
+// et les départs sont décalés dans la feuille de style.
+const parcours = [
+  {
+    ou: 'Air France',
+    // TODO Philippe : années à confirmer — laisser vide masque la ligne.
+    quand: '',
+    enjeu: 'Un réseau mondial où une panne se compte en appareils immobilisés, pas en tickets.',
+  },
+  {
+    ou: 'Ville de Montréal',
+    quand: '',
+    enjeu: 'Du service public : l’usager n’a pas de concurrent chez qui aller quand ça tombe.',
+  },
+  {
+    ou: 'Koios Intelligence',
+    quand: '',
+    enjeu:
+      'L’assurance, et une équipe qui construit avec des agents. L’erreur se paie en argent réel.',
+  },
+];
 
 const recents = (await getCollection('ecrits', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -14,48 +37,76 @@ const fmt = (d: Date) =>
   title="Philippe Lawson"
   description="Architecture de systèmes distribués, sécurité par défaut, et ce qu’on apprend en production."
 >
-  <section class="band statement">
+  <section class="band band--field open">
     <div class="shell">
-      <h1 class="statement__text">
-        <span class="statement__line">Rien n’est de confiance</span>
-        <span class="statement__line">par défaut. Ni le réseau,</span>
-        <span class="statement__line">ni le client, ni moi.</span>
+      <h1 class="open__text">
+        Rien n’est de confiance par défaut. Ni le réseau, ni le client, <em>ni moi.</em>
       </h1>
 
-      <hr class="statement__rule" />
-
-      <p class="statement__gloss">
-        Je conçois des systèmes distribués et je dirige une équipe qui construit
-        avec des agents. J’écris ici sur ce qui tient en production, et sur <strong
+      <p class="open__lead">
+        Je conçois des systèmes distribués et je dirige une équipe qui construit avec
+        des agents. J’écris ici sur ce qui tient en production, et sur <strong
           >ce qui cède</strong
         >.
       </p>
+
+      <div class="weave">
+        <p class="weave__said">
+          Quinze ans à construire des choses dont on ne parle que le jour où elles s’arrêtent.
+        </p>
+
+        <ul class="strips">
+          {
+            parcours.map((p) => (
+              <li class="strip">
+                <span class="strip__who">{p.ou}</span>
+                {p.quand && <span class="strip__when">{p.quand}</span>}
+                <p class="strip__stake">{p.enjeu}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
     </div>
   </section>
 
-  <section class="band band--deep">
+  <Seuil />
+
+  <section class="band">
     <div class="shell">
-      <h2 class="section-title">Écrits récents</h2>
+      <h2 class="lede">Ce que j’écris, je l’ai cassé d’abord.</h2>
 
       {
         recents.length === 0 ? (
-          <p class="entry__blurb">Le premier texte arrive.</p>
+          <p class="pieces__none">Le premier texte arrive.</p>
         ) : (
-          <ul class="entries">
+          <ul class="pieces">
             {recents.map((e) => (
-              <li class="entry">
-                <h3 class="entry__title">
-                  <a href={`/ecrits/${e.id}/`}>{e.data.title}</a>
-                </h3>
-                <p class="entry__blurb">{e.data.description}</p>
-                <span class="entry__date">
-                  <time datetime={e.data.date.toISOString()}>{fmt(e.data.date)}</time>
-                </span>
+              <li class="piece">
+                <a class="piece__link" href={`/ecrits/${e.id}/`}>
+                  <h3 class="piece__title">{e.data.title}</h3>
+                  <p class="piece__blurb">{e.data.description}</p>
+                  <span class="piece__when">
+                    <time datetime={e.data.date.toISOString()}>{fmt(e.data.date)}</time>
+                  </span>
+                </a>
               </li>
             ))}
           </ul>
         )
       }
+    </div>
+  </section>
+
+  <Seuil />
+
+  <section class="band band--deep">
+    <div class="shell">
+      <h2 class="lede">Je ne publie pas la liste de ce qui tourne chez moi.</h2>
+      <p class="open__lead">
+        Un inventaire d’infrastructure est une carte, et je préfère ne pas la dessiner.
+        Ce que j’utilise pour travailler, en revanche, est <a href="/outils/">sur la page outils</a>.
+      </p>
     </div>
   </section>
 </Base>
