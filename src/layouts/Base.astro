@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Lisiere from '../components/Lisiere.astro';
 
 interface Props {
   title: string;
@@ -34,7 +35,7 @@ const year = new Date().getFullYear();
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content="Philippe Lawson" />
-    <meta name="theme-color" content="#16283c" />
+    <meta name="theme-color" content="#f1e7d3" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -46,8 +47,16 @@ const year = new Date().getFullYear();
       href={new URL('/rss.xml', Astro.site)}
     />
 
-    <link rel="preload" href="/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin />
+    {/* Les trois polices du premier écran : le texte, le titre, les étiquettes. */}
+    <link rel="preload" href="/fonts/literata.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/zilla-slab-bold.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="/fonts/courier-prime-bold.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
 
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="Philippe Lawson" />
@@ -76,45 +85,48 @@ const year = new Date().getFullYear();
   </head>
 
   <body>
-    <svg width="0" height="0" aria-hidden="true" focusable="false" class="seal-source">
-      <symbol id="sceau" viewBox="0 0 100 100">
-        <path d="M5 8 L95 3 L97 94 L3 97 Z" fill="#b3351f" />
-        <path
-          d="M22 28h8v44h-8z M30 28h18v8H30z M40 36h8v12h-8z M30 48h18v8H30z M58 28h8v44h-8z M58 64h20v8H58z"
-          fill="#eae8e1"
-        />
-      </symbol>
-    </svg>
+    <div class="feuille">
+      <Lisiere motif="tete" />
 
-    <div class="loom">
-      <aside class="spine">
-        <div class="spine__inner">
-          <a class="spine__name" href="/">Philippe Lawson</a>
-          <svg class="seal" aria-hidden="true" focusable="false"><use href="#sceau" /></svg>
-          <span class="spine__place">Montréal</span>
-        </div>
-      </aside>
+      <header class="entete cadre">
+        <a class="signature" href="/">
+          <span class="monogramme" aria-hidden="true"></span>
+          <span class="signature__nom">
+            <strong>Philippe Boévi Lawson</strong>
+            <span class="signature__origines">Strasbourg · Togo · Montréal</span>
+          </span>
+        </a>
 
-      <div class="cloth">
-        <header class="masthead">
-          <a class="masthead__name" href="/">Philippe Lawson</a>
-          <nav class="masthead__nav" aria-label="Principal">
-            <a href="/ecrits/" aria-current={section === 'ecrits' ? 'page' : undefined}>Écrits</a>
-            <a href="/outils/" aria-current={section === 'outils' ? 'page' : undefined}>Outils</a>
-          </nav>
-        </header>
+        <nav class="navigation" aria-label="Principal">
+          <a href="/#parcours">Parcours</a>
+          <a href="/ecrits/" aria-current={section === 'ecrits' ? 'page' : undefined}>Écrits</a>
+          <a href="/outils/" aria-current={section === 'outils' ? 'page' : undefined}>Outils</a>
+        </nav>
+      </header>
 
-        <main>
-          <slot />
-        </main>
+      <main>
+        <slot />
+      </main>
 
-        <footer class="colophon">
-          <svg class="seal" aria-hidden="true" focusable="false"><use href="#sceau" /></svg>
-          <span>Montréal, {year}</span>
-          <span>Écrit à la main, servi en statique.</span>
+      <footer class="colophon">
+        <div class="colophon__dire cadre">
+          <span>Montréal, {year} · franco-togolais, né à Strasbourg</span>
+          <span>Écrit à la main, servi en statique. Aucun script, aucun traceur.</span>
           <a href="/rss.xml">Flux RSS</a>
-        </footer>
-      </div>
+        </div>
+
+        {/* Motif : la bande de pied. Le drapeau du Togo en lisière. */}
+        <div class="bande-pied" aria-hidden="true">
+          <div class="bande-pied__canton">
+            <svg width="16" height="16" viewBox="0 0 24 24" focusable="false">
+              <path
+                d="M12 2.5l2.6 6.6 7.1.4-5.5 4.5 1.8 6.9L12 17l-6 3.9 1.8-6.9-5.5-4.5 7.1-.4z"
+                fill="currentColor"></path>
+            </svg>
+          </div>
+          <div class="bande-pied__bandes"></div>
+        </div>
+      </footer>
     </div>
   </body>
 </html>

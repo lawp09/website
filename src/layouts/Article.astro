@@ -21,14 +21,14 @@ const fmt = (d: Date) =>
   modifiedTime={updated}
   section="ecrits"
 >
-  <article class="band">
-    <div class="shell">
+  <article class="nappe">
+    <div class="cadre">
       <header class="article__head">
         <h1 class="article__title">{title}</h1>
 
         <p class="article__meta">
           <time datetime={date.toISOString()}>{fmt(date)}</time>
-          {updated && <span>, révisé le {fmt(updated)}</span>}
+          {updated && <span>révisé le {fmt(updated)}</span>}
           {draft && <span class="piece__flag">brouillon</span>}
         </p>
 

@@ -1,0 +1,15 @@
+---
+// La lisière : une bande tissée cousue entre deux zones. Les motifs ne
+// s'alignent pas d'une lisière à l'autre — le décalage est le savoir-faire.
+// Décorative au sens strict, donc retirée de l'arbre d'accessibilité : la
+// frontière réelle est le changement de fond.
+
+interface Props {
+  /** 'tete' au-dessus de l'en-tête, 'ecrits' avant la nappe ébène. */
+  motif: 'tete' | 'ecrits';
+}
+
+const { motif } = Astro.props;
+---
+
+<div class={`lisiere lisiere--${motif}`} aria-hidden="true"></div>
