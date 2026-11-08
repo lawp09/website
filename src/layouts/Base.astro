@@ -4,9 +4,25 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description: string;
+  /** 'article' sur une page d'écrit, 'website' partout ailleurs. */
+  ogType?: 'website' | 'article';
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  /** Onglet à marquer comme courant dans la navigation. */
+  section?: 'ecrits' | 'outils';
 }
 
-const { title, description } = Astro.props;
+const {
+  title,
+  description,
+  ogType = 'website',
+  publishedTime,
+  modifiedTime,
+  section,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
 const year = new Date().getFullYear();
 ---
 
@@ -17,33 +33,88 @@ const year = new Date().getFullYear();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="author" content="Philippe Lawson" />
+    <meta name="theme-color" content="#16283c" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="alternate icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="canonical" href={canonical} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Écrits — Philippe Lawson"
+      href={new URL('/rss.xml', Astro.site)}
+    />
 
     <link rel="preload" href="/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="Philippe Lawson" />
+    <meta property="og:locale" content="fr_CA" />
+    <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Philippe Lawson — rien n’est de confiance par défaut."
+    />
+    {publishedTime && (
+      <meta property="article:published_time" content={publishedTime.toISOString()} />
+    )}
+    {modifiedTime && (
+      <meta property="article:modified_time" content={modifiedTime.toISOString()} />
+    )}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
   </head>
 
   <body>
-    <header class="masthead">
-      <a class="masthead__name" href="/">Philippe Lawson</a>
-      <nav class="masthead__nav" aria-label="Principal">
-        <a href="/ecrits/">Écrits</a>
-        <a href="/outils/">Outils</a>
-      </nav>
-    </header>
+    <svg width="0" height="0" aria-hidden="true" focusable="false" class="seal-source">
+      <symbol id="sceau" viewBox="0 0 100 100">
+        <path d="M5 8 L95 3 L97 94 L3 97 Z" fill="#b3351f" />
+        <path
+          d="M22 28h8v44h-8z M30 28h18v8H30z M40 36h8v12h-8z M30 48h18v8H30z M58 28h8v44h-8z M58 64h20v8H58z"
+          fill="#eae8e1"
+        />
+      </symbol>
+    </svg>
 
-    <main>
-      <slot />
-    </main>
+    <div class="loom">
+      <aside class="spine">
+        <div class="spine__inner">
+          <a class="spine__name" href="/">Philippe Lawson</a>
+          <svg class="seal" aria-hidden="true" focusable="false"><use href="#sceau" /></svg>
+          <span class="spine__place">Montréal</span>
+        </div>
+      </aside>
 
-    <footer class="colophon">
-      <span>Montréal, {year}</span>
-      <span>Écrit à la main, servi en statique.</span>
-    </footer>
+      <div class="cloth">
+        <header class="masthead">
+          <a class="masthead__name" href="/">Philippe Lawson</a>
+          <nav class="masthead__nav" aria-label="Principal">
+            <a href="/ecrits/" aria-current={section === 'ecrits' ? 'page' : undefined}>Écrits</a>
+            <a href="/outils/" aria-current={section === 'outils' ? 'page' : undefined}>Outils</a>
+          </nav>
+        </header>
+
+        <main>
+          <slot />
+        </main>
+
+        <footer class="colophon">
+          <svg class="seal" aria-hidden="true" focusable="false"><use href="#sceau" /></svg>
+          <span>Montréal, {year}</span>
+          <span>Écrit à la main, servi en statique.</span>
+          <a href="/rss.xml">Flux RSS</a>
+        </footer>
+      </div>
+    </div>
   </body>
 </html>

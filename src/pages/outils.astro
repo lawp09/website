@@ -1,41 +1,50 @@
 ---
 import Base from '../layouts/Base.astro';
 
-const groupes = [
+const kit = [
   {
-    titre: 'Machine',
-    items: ['MacBook Pro M4 Pro, 48 Go', 'Un clavier mécanique et deux écrans'],
+    quoi: 'Machine',
+    items: ['MacBook Pro M4 Pro, 48 Go', 'Un clavier mécanique, deux écrans'],
   },
   {
-    titre: 'Écriture de code',
-    items: ['Claude Code au terminal', 'Neovim pour les retouches rapides', 'Git, toujours en ligne de commande'],
+    quoi: 'Écriture de code',
+    items: ['Claude Code au terminal', 'Neovim pour les retouches rapides', 'Git en ligne de commande'],
   },
   {
-    titre: 'Langages du quotidien',
+    quoi: 'Langages du quotidien',
     items: ['Python', 'TypeScript', 'Go', 'Du C++ quand il le faut'],
+  },
+  {
+    quoi: 'Ce site',
+    items: ['Astro, généré une fois', 'Aucun script côté client', 'Polices servies depuis le site'],
   },
 ];
 ---
 
 <Base
   title="Outils — Philippe Lawson"
-  description="Les outils avec lesquels je travaille au quotidien."
+  description="Les outils avec lesquels je travaille au quotidien, et pourquoi je m’arrête là."
+  section="outils"
 >
   <section class="band">
     <div class="shell">
-      <h1 class="section-title">Outils</h1>
+      <h1 class="lede">Ce que j’ai sous la main.</h1>
 
-      <p class="statement__gloss">
-        Ce que j’utilise pour travailler. Pas ce qui tourne sur mes serveurs : une
-        liste d’infrastructure est une carte, et je préfère ne pas la dessiner.
+      <p class="kit__why">
+        Pas ce qui tourne sur mes serveurs : un inventaire d’infrastructure est une carte,
+        et je préfère ne pas la dessiner.
       </p>
 
-      <ul class="entries" style="margin-top: 3rem;">
+      <ul class="kit">
         {
-          groupes.map((g) => (
-            <li class="entry">
-              <h2 class="entry__title">{g.titre}</h2>
-              <p class="entry__blurb">{g.items.join(', ')}.</p>
+          kit.map((g) => (
+            <li class="kit__group">
+              <h2 class="kit__what">{g.quoi}</h2>
+              <ul class="kit__items">
+                {g.items.map((i) => (
+                  <li>{i}</li>
+                ))}
+              </ul>
             </li>
           ))
         }
