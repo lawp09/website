@@ -7,6 +7,26 @@ adhère au [versionnage sémantique](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-08
+
+### Added
+
+- Garde-fous étendus : une URI `data:`, une ressource locale référencée mais absente de
+  la sortie, ou une propriété CSS qui ne résout pas font échouer le build — trois pannes
+  qui ne cassaient rien en silence. Tests `npm test` lancés en CI.
+
+### Changed
+
+- Direction visuelle « Kente » : kaolin et ébène, un parcours en timbres postaux et une
+  section sur le métissage franco-togolais — le site dit d'où il vient au lieu de rester
+  neutre ; voir `docs/design.md`.
+- Favicon, icône d'application et image de partage au damier de la direction « Kente », avec
+  les métadonnées Open Graph et Twitter qui vont avec. Le `.ico` et l'image de partage se
+  régénèrent par un script du dépôt, sans dépendance ajoutée — voir `docs/design.md`,
+  « La marque » et « L'image de partage ».
+
+## [0.1.0] - 2026-11-08
+
 ### Added
 
 - Site personnel en Astro généré statiquement : accueil, écrits, outils et page 404, avec
@@ -19,7 +39,7 @@ adhère au [versionnage sémantique](https://semver.org/lang/fr/).
 - Interdiction du JavaScript et des styles inline, qui rend possible une CSP
   `default-src 'none'` — coloration syntaxique comprise, passée à Prism parce que Shiki
   pose ses couleurs en `style=` ; voir README, « Contraintes à ne pas casser ».
-- Intégration continue sur push et pull request vers `main` : typage, tests, build et
+- Intégration continue sur push et pull request vers `main` : typage, build et
   garde-fous qui refusent tout ce que la CSP refuserait en production. En `contents: read`
   et actions épinglées par SHA puisque le dépôt est public — voir README, « Les
   garde-fous » et « Intégration continue ».
@@ -27,13 +47,7 @@ adhère au [versionnage sémantique](https://semver.org/lang/fr/).
   d'autre : le tag `v0.1.0` produit l'image `0.1.0`, seul tag poussé, pour que Renovate
   n'ait que des versions à comparer. Build arm64 natif, `packages: write` accordé au seul
   job qui pousse, aucun secret ajouté — voir README, « Publier ».
-- Direction visuelle « Kente » : kaolin et ébène, un parcours en timbres postaux et une
-  section sur le métissage franco-togolais — le site dit d'où il vient au lieu de rester
-  neutre ; voir `docs/design.md`.
 - Mise en page des textes longs (listes, citations, légendes, tableaux, code) et états de
   survol et de focus conçus sur la liste d'écrits, au lieu des réglages par défaut.
 - Flux RSS sur `/rss.xml`, sans dépendance ajoutée, pour que le site puisse être suivi.
-- Favicon, icône d'application et image de partage propres au site, toutes au damier de la
-  direction « Kente », avec les métadonnées Open Graph et Twitter qui vont avec. Le `.ico`
-  et l'image de partage se régénèrent par un script du dépôt, sans dépendance ajoutée —
-  voir `docs/design.md`, « La marque » et « L'image de partage ».
+- Direction visuelle « Trame », puis favicon et image de partage propres au site.
