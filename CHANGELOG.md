@@ -33,5 +33,7 @@ adhère au [versionnage sémantique](https://semver.org/lang/fr/).
 - Mise en page des textes longs (listes, citations, légendes, tableaux, code) et états de
   survol et de focus conçus sur la liste d'écrits, au lieu des réglages par défaut.
 - Flux RSS sur `/rss.xml`, sans dépendance ajoutée, pour que le site puisse être suivi.
-- Favicon, icône d'application et image de partage propres au site, avec les métadonnées
-  Open Graph et Twitter qui vont avec.
+- Favicon, icône d'application et image de partage propres au site, toutes au damier de la
+  direction « Kente », avec les métadonnées Open Graph et Twitter qui vont avec. Le `.ico`
+  et l'image de partage se régénèrent par un script du dépôt, sans dépendance ajoutée —
+  voir `docs/design.md`, « La marque » et « L'image de partage ».
