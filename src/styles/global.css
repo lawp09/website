@@ -1,0 +1,393 @@
+/* ---------------------------------------------------------------
+   Polices servies depuis le site : aucune requête tierce au runtime,
+   donc aucune adresse IP de visiteur transmise à un tiers.
+   --------------------------------------------------------------- */
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/archivo.woff2') format('woff2');
+  font-weight: 400 700;
+  font-stretch: 75% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Newsreader';
+  src: url('/fonts/newsreader.woff2') format('woff2');
+  font-weight: 300 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Newsreader';
+  src: url('/fonts/newsreader-italic.woff2') format('woff2');
+  font-weight: 300 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --paper: #f1f2ee;
+  --ink: #16202a;
+  --muted: #5b6b72;
+  --rule: #ccd2cf;
+
+  --deep: #0d161e;
+  --deep-ink: #dde4e1;
+  --deep-muted: #8d9d9e;
+  --deep-rule: #263440;
+
+  --signal: #2e6b58;
+  --signal-deep: #7bbfa4;
+
+  --voice: 'Archivo', system-ui, sans-serif;
+  --read: 'Newsreader', Georgia, serif;
+
+  --gutter: clamp(1.5rem, 5vw, 5rem);
+  --measure: 64ch;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--read);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--voice);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 140ms ease, color 140ms ease;
+}
+
+a:hover {
+  color: var(--signal);
+  text-decoration-color: currentColor;
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+/* --- Bandes : le changement de fond EST la frontière ------------- */
+
+.band {
+  padding-block: clamp(3.5rem, 9vw, 7rem);
+  padding-inline: var(--gutter);
+}
+
+.band--deep {
+  background: var(--deep);
+  color: var(--deep-ink);
+}
+
+.band--deep a:hover {
+  color: var(--signal-deep);
+}
+
+.band--deep :focus-visible {
+  outline-color: var(--signal-deep);
+}
+
+.shell {
+  max-width: 68rem;
+  margin-inline: auto;
+}
+
+/* --- En-tête ----------------------------------------------------- */
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 1.75rem var(--gutter) 0;
+  max-width: 68rem;
+  margin-inline: auto;
+}
+
+.masthead__name {
+  font-family: var(--voice);
+  font-weight: 600;
+  font-size: 0.95rem;
+  font-variation-settings: 'wdth' 112;
+  text-decoration: none;
+}
+
+.masthead__nav {
+  display: flex;
+  gap: 1.5rem;
+  font-family: var(--voice);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* --- Déclaration d'ouverture ------------------------------------- */
+
+.statement {
+  padding-block: clamp(4rem, 14vh, 9rem) clamp(3rem, 8vw, 5rem);
+}
+
+.statement__text {
+  font-size: clamp(2.3rem, 7.4vw, 5.1rem);
+  font-variation-settings: 'wdth' 112;
+  font-weight: 620;
+  line-height: 0.99;
+  letter-spacing: -0.028em;
+  max-width: 18ch;
+}
+
+.statement__line {
+  display: block;
+}
+
+.statement__rule {
+  width: 4.5rem;
+  height: 1px;
+  background: var(--ink);
+  border: 0;
+  margin: clamp(2rem, 5vw, 3rem) 0 1.5rem;
+}
+
+.statement__gloss {
+  max-width: 46ch;
+  font-size: 1.1875rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.statement__gloss strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* --- Liste d'écrits ---------------------------------------------- */
+
+.section-title {
+  font-size: 0.95rem;
+  font-variation-settings: 'wdth' 112;
+  font-weight: 600;
+  color: var(--deep-muted);
+  margin-bottom: 2.5rem;
+}
+
+.band:not(.band--deep) .section-title {
+  color: var(--muted);
+}
+
+.entries {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.entry {
+  padding-block: 1.75rem;
+  border-top: 1px solid var(--deep-rule);
+}
+
+.band:not(.band--deep) .entry {
+  border-top-color: var(--rule);
+}
+
+.entry:last-child {
+  border-bottom: 1px solid var(--deep-rule);
+}
+
+.band:not(.band--deep) .entry:last-child {
+  border-bottom-color: var(--rule);
+}
+
+.entry__title {
+  font-family: var(--read);
+  font-size: clamp(1.35rem, 2.6vw, 1.7rem);
+  font-weight: 450;
+  letter-spacing: -0.005em;
+  line-height: 1.25;
+  margin: 0 0 0.4rem;
+}
+
+.entry__title a {
+  text-decoration: none;
+}
+
+.entry__title a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.entry__blurb {
+  margin: 0 0 0.6rem;
+  max-width: var(--measure);
+  color: var(--deep-muted);
+}
+
+.band:not(.band--deep) .entry__blurb {
+  color: var(--muted);
+}
+
+.entry__date {
+  font-family: var(--voice);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--deep-muted);
+}
+
+.band:not(.band--deep) .entry__date {
+  color: var(--muted);
+}
+
+.entry__draft {
+  font-family: var(--voice);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  margin-left: 0.75rem;
+}
+
+/* --- Article ------------------------------------------------------ */
+
+.article__head {
+  max-width: var(--measure);
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.article__title {
+  font-family: var(--read);
+  font-weight: 450;
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  margin-bottom: 1rem;
+}
+
+.article__meta {
+  font-family: var(--voice);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.prose {
+  max-width: var(--measure);
+}
+
+.prose > * + * {
+  margin-top: 1.4em;
+}
+
+.prose h2 {
+  font-family: var(--read);
+  font-weight: 500;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+  margin-top: 2.6em;
+}
+
+.prose blockquote {
+  margin-inline: 0;
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--signal);
+  font-style: italic;
+  color: var(--muted);
+}
+
+.prose code {
+  font-size: 0.9em;
+  background: #e4e6e1;
+  padding: 0.1em 0.35em;
+}
+
+.prose pre {
+  background: var(--deep);
+  color: var(--deep-ink);
+  padding: 1.25rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+}
+
+/* --- Pied --------------------------------------------------------- */
+
+.colophon {
+  border-top: 1px solid var(--rule);
+  padding: 2rem var(--gutter) 3rem;
+  max-width: 68rem;
+  margin-inline: auto;
+  font-family: var(--voice);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  justify-content: space-between;
+}
+
+/* --- Entrée en scène : une seule orchestration, au chargement ----- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .statement__line,
+  .statement__rule,
+  .statement__gloss {
+    animation: rise 620ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .statement__line:nth-child(2) {
+    animation-delay: 90ms;
+  }
+
+  .statement__line:nth-child(3) {
+    animation-delay: 180ms;
+  }
+
+  .statement__rule {
+    animation-delay: 300ms;
+  }
+
+  .statement__gloss {
+    animation-delay: 360ms;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

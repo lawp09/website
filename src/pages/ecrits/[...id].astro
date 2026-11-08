@@ -1,0 +1,21 @@
+---
+import Article from '../../layouts/Article.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const isDev = import.meta.env.DEV;
+  const entries = await getCollection('ecrits', ({ data }) => isDev || !data.draft);
+
+  return entries.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Article entry={entry}>
+  <Content />
+</Article>

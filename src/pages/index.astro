@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const recents = (await getCollection('ecrits', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+
+<Base
+  title="Philippe Lawson"
+  description="Architecture de systèmes distribués, sécurité par défaut, et ce qu’on apprend en production."
+>
+  <section class="band statement">
+    <div class="shell">
+      <h1 class="statement__text">
+        <span class="statement__line">Rien n’est de confiance</span>
+        <span class="statement__line">par défaut. Ni le réseau,</span>
+        <span class="statement__line">ni le client, ni moi.</span>
+      </h1>
+
+      <hr class="statement__rule" />
+
+      <p class="statement__gloss">
+        Je conçois des systèmes distribués et je dirige une équipe qui construit
+        avec des agents. J’écris ici sur ce qui tient en production, et sur <strong
+          >ce qui cède</strong
+        >.
+      </p>
+    </div>
+  </section>
+
+  <section class="band band--deep">
+    <div class="shell">
+      <h2 class="section-title">Écrits récents</h2>
+
+      {
+        recents.length === 0 ? (
+          <p class="entry__blurb">Le premier texte arrive.</p>
+        ) : (
+          <ul class="entries">
+            {recents.map((e) => (
+              <li class="entry">
+                <h3 class="entry__title">
+                  <a href={`/ecrits/${e.id}/`}>{e.data.title}</a>
+                </h3>
+                <p class="entry__blurb">{e.data.description}</p>
+                <span class="entry__date">
+                  <time datetime={e.data.date.toISOString()}>{fmt(e.data.date)}</time>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,32 @@
+---
+import Base from './Base.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'ecrits'>;
+}
+
+const { entry } = Astro.props;
+const { title, description, date, updated } = entry.data;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+
+<Base title={`${title} — Philippe Lawson`} description={description}>
+  <article class="band">
+    <div class="shell">
+      <header class="article__head">
+        <h1 class="article__title">{title}</h1>
+        <p class="article__meta">
+          <time datetime={date.toISOString()}>{fmt(date)}</time>
+          {updated && <span>, révisé le {fmt(updated)}</span>}
+        </p>
+      </header>
+
+      <div class="prose">
+        <slot />
+      </div>
+    </div>
+  </article>
+</Base>
