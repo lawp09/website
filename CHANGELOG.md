@@ -17,8 +17,16 @@ adhère au [versionnage sémantique](https://semver.org/lang/fr/).
 - Polices servies depuis le site lui-même : aucune requête vers un tiers, donc aucune
   adresse IP de visiteur transmise ailleurs.
 - Interdiction du JavaScript et des styles inline, qui rend possible une CSP
-  `default-src 'none'`, désormais vérifiée sur la sortie de build par
-  `npm run check:constraints` — voir README, « Les garde-fous ».
-- Intégration continue sur push et pull request vers `main` : typage, build et garde-fous,
-  en `contents: read` et actions épinglées par SHA puisque le dépôt est public — voir
-  README, « Intégration continue ».
+  `default-src 'none'` — coloration syntaxique comprise, passée à Prism parce que Shiki
+  pose ses couleurs en `style=` ; voir README, « Contraintes à ne pas casser ».
+- Intégration continue sur push et pull request vers `main` : typage, build, et des
+  garde-fous qui font échouer le build sur un script, un style inline ou une ressource
+  tierce dans la sortie. En `contents: read` et actions épinglées par SHA puisque le dépôt
+  est public — voir README, « Les garde-fous » et « Intégration continue ».
+- Direction visuelle « Trame » : indigo teint, coton brut, un seul fil safran et un sceau
+  d'auteur, pour un site qui se lit comme écrit à la main — voir `docs/design.md`.
+- Mise en page des textes longs (listes, citations, légendes, tableaux, code) et états de
+  survol et de focus conçus sur la liste d'écrits, au lieu des réglages par défaut.
+- Flux RSS sur `/rss.xml`, sans dépendance ajoutée, pour que le site puisse être suivi.
+- Favicon, icône d'application et image de partage propres au site, avec les métadonnées
+  Open Graph et Twitter qui vont avec.
