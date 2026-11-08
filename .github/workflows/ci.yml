@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Typage, build et garde-fous
+    name: Typage, tests, build et garde-fous
     runs-on: ubuntu-latest
     steps:
       # Actions épinglées par SHA : un tag mutable peut être repointé sur
@@ -38,6 +38,9 @@ jobs:
 
       - name: Vérifier le typage
         run: npm run check:types
+
+      - name: Lancer les tests des garde-fous
+        run: npm test
 
       - name: Construire le site
         run: npm run build
